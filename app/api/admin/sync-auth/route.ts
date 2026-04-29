@@ -28,7 +28,7 @@ export async function POST(request: Request) {
         // 2. Iterar e criar as contas
         for (const student of students) {
             try {
-                const password = "IBAD2026"
+                const password = "AVALIA2026"
                 const email = student.email || `${student.cpf}@student.ibad.com`
 
                 const { data: authData, error: authError } = await supabase.auth.admin.createUser({

@@ -41,7 +41,7 @@ export async function POST(req: Request) {
         // 4. Create Auth User
         const cleanCpf = student.cpf.replace(/\D/g, '')
         const email = `${cleanCpf}@student.IBAD.com`
-        const password = "IBAD2026"
+        const password = "AVALIA2026"
 
         // Use admin client to create user without confirmation
         const { data: authUser, error: authErr } = await supabase.auth.admin.createUser({

@@ -72,7 +72,7 @@ export function StudentManager({ isMaster }: { isMaster?: boolean }) {
     // ── Add form ──────────────────────────────────────────────────────────────
     const [name, setName] = useState("")
     const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("IBAD2026")
+    const [password, setPassword] = useState("AVALIA2026")
     const [showPassword, setShowPassword] = useState(false)
     const [cpf, setCpf] = useState("")
     const [phone, setPhone] = useState("")
@@ -150,7 +150,7 @@ export function StudentManager({ isMaster }: { isMaster?: boolean }) {
     // ─── Create ───────────────────────────────────────────────────────────────
 
     function resetAddForm() {
-        setName(""); setEmail(""); setPassword("IBAD2026"); setCpf(""); setPhone("")
+        setName(""); setEmail(""); setPassword("AVALIA2026"); setCpf(""); setPhone("")
         setChurch(""); setPastor(""); setBirthDate(""); setStreet(""); setNumber("")
         setNeighborhood(""); setCity(""); setState(""); setClassId("none")
     }
@@ -323,7 +323,7 @@ export function StudentManager({ isMaster }: { isMaster?: boolean }) {
                 await registerStudentByAdmin({
                     name: bulkName?.trim() || "",
                     email: bulkEmail?.trim() || "",
-                    password: "IBAD2026", // Default password
+                    password: "AVALIA2026", // Default password
                     cpf: bulkCpf?.trim() || "",
                     phone: bulkPhone?.trim() || "",
                     class_id: bulkClassId?.trim() === "none" ? undefined : bulkClassId?.trim(),
@@ -346,7 +346,7 @@ export function StudentManager({ isMaster }: { isMaster?: boolean }) {
     }
     
     async function handleSyncAuth() {
-        if (!confirm("Isso criará contas de acesso automático para todos os alunos que ainda não possuem login. A senha inicial será IBAD2026. Deseja continuar?")) return
+        if (!confirm("Isso criará contas de acesso automático para todos os alunos que ainda não possuem login. A senha inicial será AVALIA2026. Deseja continuar?")) return
         setSyncing(true)
         try {
             const res = await fetch("/api/admin/sync-auth", { method: "POST" })
