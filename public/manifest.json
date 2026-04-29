@@ -1,7 +1,7 @@
 {
-    "name": "IBAD - Instituto Bíblico",
-    "short_name": "IBAD",
-    "description": "Sistema de Gestão Teológica IBAD",
+    "name": "AVALIA — Gestão de Provas",
+    "short_name": "AVALIA",
+    "description": "Plataforma de Alta Performance para Gestão de Avaliações",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",

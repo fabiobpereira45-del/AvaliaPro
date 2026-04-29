@@ -4,45 +4,39 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* IBAD Brand Colors - Deep Violet & Gold */
-  --maroon: #4c1d95;
-  --maroon-light: #6d28d9;
-  --maroon-dark: #2e1065;
-  --gold: #7c3aed;
-  --gold-light: #8b5cf6;
-  --gold-dark: #5b21b6;
+  /* AVALIA Brand Colors - Emerald Neon, Vibrant Orange & Deep Navy */
+  --emerald-neon: #10b981;
+  --emerald-light: #34d399;
+  --emerald-dark: #059669;
+  
+  --orange-vibrant: #f59e0b;
+  --orange-light: #fbbf24;
+  --orange-dark: #d97706;
+
+  --navy-deep: #020617;
+  --navy-slate: #0f172a;
 
   /* Semantic tokens */
-  --background: #fafafa;
-  --foreground: #1a1035;
+  --background: #ffffff;
+  --foreground: #020617;
   --card: #ffffff;
-  --card-foreground: #1a1035;
+  --card-foreground: #020617;
   --popover: #ffffff;
-  --popover-foreground: #1a1035;
-  --primary: var(--maroon);
+  --popover-foreground: #020617;
+  --primary: var(--navy-deep);
   --primary-foreground: #ffffff;
-  --secondary: #f5f3ff;
-  --secondary-foreground: var(--maroon);
-  --muted: #f3f4f6;
-  --muted-foreground: #6b7280;
-  --accent: var(--gold);
+  --secondary: #f1f5f9;
+  --secondary-foreground: var(--navy-deep);
+  --muted: #f8fafc;
+  --muted-foreground: #64748b;
+  --accent: var(--emerald-neon);
   --accent-foreground: #ffffff;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: #e4e0f5;
-  --input: #f1f0f9;
-  --ring: var(--gold-light);
-  --radius: 0.75rem;
-  --navy: #0f172a;
-  --navy-light: #1e293b;
-  --accent-gold: #7c3aed;
-
-  /* Chart */
-  --chart-1: var(--maroon);
-  --chart-2: var(--gold);
-  --chart-3: #5b21b6;
-  --chart-4: #a78bfa;
-  --chart-5: #2e1065;
+  --border: #e2e8f0;
+  --input: #f1f5f9;
+  --ring: var(--emerald-neon);
+  --radius: 1rem;
 }
 
 @theme inline {
@@ -78,15 +72,14 @@
   --radius-xl: calc(var(--radius) + 4px);
 
   /* Brand tokens */
-  --color-maroon: var(--maroon);
-  --color-maroon-light: var(--maroon-light);
-  --color-maroon-dark: var(--maroon-dark);
-  --color-gold: var(--gold);
-  --color-gold-light: var(--gold-light);
-  --color-gold-dark: var(--gold-dark);
-  --color-navy: var(--navy);
-  --color-navy-light: var(--navy-light);
-  --color-accent-gold: var(--accent-gold);
+  --color-emerald-neon: var(--emerald-neon);
+  --color-emerald-light: var(--emerald-light);
+  --color-emerald-dark: var(--emerald-dark);
+  --color-orange-vibrant: var(--orange-vibrant);
+  --color-orange-light: var(--orange-light);
+  --color-orange-dark: var(--orange-dark);
+  --color-navy-deep: var(--navy-deep);
+  --color-navy-slate: var(--navy-slate);
 }
 
 @layer base {
@@ -113,11 +106,11 @@
   }
 
   .premium-gradient {
-    background: linear-gradient(135deg, var(--maroon) 0%, var(--maroon-light) 100%);
+    background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy-slate) 100%);
   }
 
   .accent-gradient {
-    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+    background: linear-gradient(135deg, var(--emerald-neon) 0%, var(--emerald-light) 100%);
   }
 
   .hover-lift {

@@ -186,7 +186,7 @@ export function StudentDashboard({ session, onBack, onLogout }: Props) {
                     />
                 </div>
                 <h2 className="text-base font-bold tracking-tight text-white">{profile.name}</h2>
-                <p className="text-[10px] text-emerald-neon uppercase tracking-[3px] font-black">Portal do Aluno • AVALIA</p>
+                <p className="text-[10px] text-emerald-neon uppercase tracking-[3px] font-black">Plataforma AVALIA • Aluno</p>
             </div>
 
             <ScrollArea className="flex-1 px-3">
@@ -277,7 +277,7 @@ export function StudentDashboard({ session, onBack, onLogout }: Props) {
                                 </h2>
                             </div>
                             <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest leading-none mt-1">
-                                {profile.enrollment_number} • Teologia Bíblica (Básico)
+                                {profile.enrollment_number} • Gestão Acadêmica AVALIA
                             </p>
                         </div>
                     </div>

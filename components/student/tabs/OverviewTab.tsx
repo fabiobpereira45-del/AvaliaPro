@@ -25,7 +25,7 @@ export function OverviewTab({ profile, onTabChange }: OverviewTabProps) {
             <div>
               <h3 className="text-4xl font-black mb-4 leading-tight tracking-tighter">Prepare-se para <br /> sua Próxima Prova!</h3>
               <p className="text-slate-300 text-lg max-w-md leading-relaxed font-medium">
-                Olá, {profile.name.split(' ')[0]}. Sua jornada acadêmica foca agora na excelência das avaliações.
+                Olá, {profile.name.split(' ')[0]}. Bem-vindo ao AVALIA — Sua plataforma definitiva de gestão acadêmica e exames.
               </p>
             </div>
             <div className="flex gap-4">

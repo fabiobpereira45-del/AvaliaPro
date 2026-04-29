@@ -128,7 +128,6 @@ export default function HomePage() {
           studentEmail={session?.email}
           onAdminClick={() => setView("professor-login")}
           onStudentAreaClick={session ? () => setView("student-dashboard") : undefined}
-          onEnrollClick={() => setShowEnroll(true)}
         />
       )}
 
@@ -137,37 +136,43 @@ export default function HomePage() {
         {view === "landing" && (
           <div className="space-y-8">
             {/* Hero */}
-            <div className="bg-gradient-to-br from-[#2e1065] to-[#4c1d95] rounded-3xl p-8 md:p-12 text-white shadow-2xl border border-white/10 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-10">
-              <div className="absolute top-0 left-0 w-96 h-96 bg-white/5 rounded-full -ml-48 -mt-48 blur-3xl" />
-              <div className="absolute bottom-0 right-0 w-64 h-64 bg-violet-400/10 rounded-full blur-3xl" />
+            <div className="bg-gradient-to-br from-[#020617] to-[#0f172a] rounded-[2.5rem] p-8 md:p-12 text-white shadow-2xl border border-white/5 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-10">
+              <div className="absolute top-0 left-0 w-96 h-96 bg-emerald-neon/10 rounded-full -ml-48 -mt-48 blur-[100px]" />
+              <div className="absolute bottom-0 right-0 w-64 h-64 bg-orange-vibrant/10 rounded-full blur-[100px]" />
 
-              <div className="text-left relative z-10 flex-1 space-y-4">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/10 text-[10px] uppercase tracking-widest font-bold text-violet-200 mb-2">
-                  Instituto Bíblico das Assembleias de Deus
+              <div className="text-left relative z-10 flex-1 space-y-6">
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-neon/10 border border-emerald-neon/20 text-[10px] uppercase tracking-[0.3em] font-black text-emerald-neon mb-2">
+                  Plataforma de Alta Performance
                 </div>
-                <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight leading-tight">
-                  IBAD <span className="text-violet-300">Núcleo</span><br />Cosme de Fárias
+                <h1 className="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9]">
+                  AVALIA<br />
+                  <span className="text-emerald-neon text-4xl md:text-5xl">PROVAS & GESTÃO</span>
                 </h1>
-                <div className="h-1.5 w-20 bg-violet-400 rounded-full opacity-60" />
-                <div className="pt-2 flex gap-4">
+                <div className="h-2 w-24 bg-emerald-neon rounded-full shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
+                <p className="text-lg text-slate-400 font-medium max-w-md leading-relaxed">
+                  Liderança e Tecnologia em Gestão de Provas. <br />
+                  <span className="text-white">Excelência na avaliação acadêmica.</span>
+                </p>
+                
+                <div className="pt-4 flex gap-8">
                   <div className="flex flex-col">
-                    <span className="text-[10px] uppercase text-white/40 font-bold tracking-tighter">Núcleo</span>
-                    <span className="text-sm font-bold">Cosme de Fárias</span>
+                    <span className="text-[10px] uppercase text-emerald-neon font-black tracking-widest">SISTEMA</span>
+                    <span className="text-sm font-bold text-white uppercase tracking-tighter">CERTIFICADO 2026</span>
                   </div>
-                  <div className="w-px h-8 bg-white/10" />
+                  <div className="w-px h-10 bg-white/10" />
                   <div className="flex flex-col">
-                    <span className="text-[10px] uppercase text-white/40 font-bold tracking-tighter">Fundação</span>
-                    <span className="text-sm font-bold">2026</span>
+                    <span className="text-[10px] uppercase text-orange-vibrant font-black tracking-widest">FOCO</span>
+                    <span className="text-sm font-bold text-white uppercase tracking-tighter">GESTÃO ACADÊMICA</span>
                   </div>
                 </div>
               </div>
 
               <div className="relative z-10 flex-shrink-0 group">
-                <div className="absolute inset-0 bg-violet-400/20 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                <div className="relative z-10 w-56 h-56 md:w-72 md:h-72 rounded-full bg-white shadow-[0_20px_50px_rgba(0,0,0,0.4)] transition-transform duration-500 hover:scale-105 overflow-hidden flex items-center justify-center p-4">
+                <div className="absolute inset-0 bg-emerald-neon/20 rounded-full blur-[50px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                <div className="relative z-10 w-64 h-64 md:w-80 md:h-80 rounded-[3rem] bg-white shadow-2xl transition-transform duration-500 hover:scale-105 overflow-hidden flex items-center justify-center p-8 border-4 border-emerald-neon/20">
                   <img
-                    src="/ibad-logo.png"
-                    alt="IBAD Logo"
+                    src="/avalia-logo.png"
+                    alt="AVALIA Logo"
                     className="w-full h-full object-contain"
                   />
                 </div>
@@ -222,7 +227,7 @@ export default function HomePage() {
               </button>
             </div>
 
-            {/* Espaço removido: seções institucionais suprimidas a pedido do IBAD */}
+            {/* Espaço removido: seções institucionais suprimidas a pedido do cliente */}
           </div>
         )}
 

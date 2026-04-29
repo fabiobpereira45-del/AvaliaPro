@@ -236,10 +236,10 @@ export function ClassManager() {
                 <div className="flex gap-2">
                     <button
                         onClick={async () => {
-                            if (confirm("Isto irá adicionar as 24 disciplinas da grade IBAD ao sistema. Continuar?")) {
+                            if (confirm("Isto irá adicionar as 25 disciplinas da grade AVALIA ao sistema. Continuar?")) {
                                 try {
-                                    const { insertIBADDisciplines } = await import("@/lib/store");
-                                    await insertIBADDisciplines();
+                                    const { insertOfficialDisciplines } = await import("@/lib/store");
+                                    await insertOfficialDisciplines();
                                     alert("Grade sincronizada com sucesso!");
                                     window.location.reload();
                                 } catch (err) { alert("Erro ao sincronizar: " + (err as any).message); }

@@ -22,32 +22,22 @@ export function AssessmentHeader({
       <div className="mx-auto max-w-[1400px] px-4 py-3">
         <div className="flex items-center justify-between gap-4">
           {/* Logo + Brand */}
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full shadow-sm shrink-0 overflow-hidden bg-white">
-              <img src="/ibad-logo.png" alt="IBAD" className="h-full w-full object-contain p-0.5" />
+          <div className="flex items-center gap-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl shadow-lg shrink-0 overflow-hidden bg-white border-2 border-emerald-neon/20">
+              <img src="/avalia-logo.png" alt="AVALIA" className="h-full w-full object-contain p-1" />
             </div>
             <div>
-              <p className="text-xs font-medium text-primary-foreground/70 uppercase tracking-widest hidden sm:block">
-                Instituto Bíblico das Assembléias de Deus
+              <p className="text-[10px] font-black text-emerald-neon uppercase tracking-[0.2em] hidden sm:block">
+                Plataforma de Avaliações
               </p>
-              <p className="text-sm font-bold leading-tight text-primary-foreground">
-                IBAD — Núcleo Cosme de Fárias
+              <p className="text-xl font-black leading-tight text-white tracking-tighter">
+                AVALIA <span className="text-emerald-neon">PRO</span>
               </p>
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-2">
-            {onEnrollClick && (
-              <button
-                onClick={onEnrollClick}
-                className="flex items-center gap-1.5 rounded-md bg-accent text-accent-foreground px-3 py-1.5 text-xs font-bold hover:bg-accent/90 transition-colors shadow-sm"
-                title="Fazer Matrícula"
-              >
-                <ClipboardList className="h-3.5 w-3.5 shrink-0" />
-                <span className="hidden sm:inline">Matrícula</span>
-              </button>
-            )}
+            {/* Action Buttons */}
+            <div className="flex items-center gap-3">
             {onAdminClick && (
               <button
                 onClick={onAdminClick}

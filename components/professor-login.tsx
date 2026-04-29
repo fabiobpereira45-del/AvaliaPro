@@ -72,7 +72,7 @@ export function ProfessorLogin({ onLogin, onBack }: Props) {
         }
       } else {
         const normalizedEmail = email.toLowerCase().trim()
-        const isHardcodedMaster = normalizedEmail === MASTER_CREDENTIALS.email || normalizedEmail === "professor@ibad.com"
+        const isHardcodedMaster = normalizedEmail === MASTER_CREDENTIALS.email || normalizedEmail === "admin@avalia.com"
         
         if (isHardcodedMaster && password === MASTER_CREDENTIALS.password) {
             // Check if account exists in DB first to get photo, etc.

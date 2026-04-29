@@ -162,7 +162,7 @@ export function StudentLogin({ onLogin, onResult, onBack, preloadedAssessmentId 
             <div className="mb-4">
               <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/5 text-emerald-neon text-[10px] font-black uppercase tracking-[0.2em] border border-white/10 backdrop-blur-md">
                 <ShieldCheck className="h-3.5 w-3.5" />
-                {assessment.institution || "AVALIA — Gestão de Provas"}
+                AVALIA — Gestão de Provas
               </span>
             </div>
             <h1 className="text-4xl font-black tracking-tighter text-white leading-none mb-4">{assessment.title}</h1>

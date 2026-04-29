@@ -111,7 +111,7 @@ function EnrollmentContent() {
                 </div>
                 <h2 className="text-3xl font-bold text-foreground">Matrícula Realizada!</h2>
                 <p className="text-muted-foreground">
-                    Sua matrícula no IBAD foi concluída com sucesso. Você já pode acessar o portal usando seu CPF e a senha padrão <b>IBAD2026</b>.
+                    Sua matrícula no AVALIA foi concluída com sucesso. Você já pode acessar o portal usando seu CPF e a senha padrão <b>AVALIA2026</b>.
                 </p>
                 <div className="bg-muted p-4 rounded-2xl border border-border">
                     <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold">Número de Matrícula</p>
@@ -151,7 +151,7 @@ function EnrollmentContent() {
                         </div>
                         <h1 className="text-2xl font-bold">Matrícula Online</h1>
                     </div>
-                    <p className="text-muted-foreground text-sm uppercase tracking-wider font-semibold">Instituto de Ensino Teológico - IBAD</p>
+                    <p className="text-muted-foreground text-sm uppercase tracking-wider font-semibold">Plataforma de Alta Performance — AVALIA</p>
                     <div className="space-y-4 pt-4">
                         <div className="flex gap-3">
                             <ShieldCheck className="h-5 w-5 text-green-600 shrink-0" />

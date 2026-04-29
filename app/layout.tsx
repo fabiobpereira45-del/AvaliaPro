@@ -24,8 +24,8 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: "IBAD - Instituto Bíblico das Assembleias de Deus",
-  description: "Sistema de Gestão Acadêmica do IBAD - Núcleo Cosme de Fárias",
+  title: "AVALIA — Gestão de Provas e Avaliações",
+  description: "Plataforma de alta performance para gestão de exames acadêmicos.",
   generator: "v0.app",
   manifest: "/manifest.json",
   appleWebApp: {

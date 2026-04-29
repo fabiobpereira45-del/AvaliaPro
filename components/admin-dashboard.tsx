@@ -329,12 +329,12 @@ export function AdminDashboard({ onLogout }: Props) {
         {/* Mobile Header */}
         <header className="lg:hidden h-16 border-b border-border/50 premium-gradient sticky top-0 z-40 px-4 flex items-center justify-between shadow-lg">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 flex items-center justify-center rounded-full shrink-0 overflow-hidden border border-white/20 shadow-md bg-white">
-              <img src="/ibad-logo.png" alt="Logo" className="w-full h-full object-contain p-1" />
+            <div className="w-10 h-10 flex items-center justify-center rounded-xl shrink-0 overflow-hidden border-2 border-emerald-neon/20 shadow-md bg-white">
+              <img src="/avalia-logo.png" alt="Logo" className="w-full h-full object-contain p-1" />
             </div>
             <div>
-              <h1 className="font-bold text-white text-sm leading-tight">IBAD</h1>
-              <p className="text-[9px] text-white/70 uppercase tracking-widest font-semibold">Painel Administrativo</p>
+              <h1 className="font-black text-white text-sm leading-tight">AVALIA</h1>
+              <p className="text-[9px] text-emerald-neon uppercase tracking-widest font-black">Plataforma de Alta Performance</p>
             </div>
           </div>
 
@@ -364,7 +364,7 @@ export function AdminDashboard({ onLogout }: Props) {
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span className="font-medium text-foreground capitalize">{tab.replace('_', ' ')}</span>
             <ChevronRight className="h-4 w-4 opacity-50" />
-            <span className="opacity-50">IBAD — Núcleo Cosme de Fárias</span>
+            <span className="opacity-50">AVALIA — Inteligência em Gestão de Provas</span>
           </div>
           <div className="flex items-center gap-4">
             {isMaster && (

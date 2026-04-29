@@ -106,15 +106,15 @@ export function hashPassword(plain: string): string {
 export function checkPassword(plain: string, hash: string): boolean { return hashPassword(plain) === hash }
 
 const KEYS = {
-  PROFESSOR_SESSION: "ibad_professor_session",
-  STUDENT_SESSION: "ibad_current_session",
-  DRAFT_ANSWERS: "ibad_draft_answers",
+  PROFESSOR_SESSION: "avalia_professor_session",
+  STUDENT_SESSION: "avalia_current_session",
+  DRAFT_ANSWERS: "avalia_draft_answers",
 } as const
 
 export const MASTER_CREDENTIALS = {
-  email: "professor@ibad.com",
-  password: "IBAD2026",
-  name: "Corpo Docente",
+  email: "admin@avalia.com",
+  password: "AVALIA2026",
+  name: "Gestão AVALIA",
   role: "master" as const,
 }
 export const PROFESSOR_CREDENTIALS = MASTER_CREDENTIALS
@@ -164,7 +164,7 @@ export function clearProfessorSession(): void {
 export async function registerStudentAuth(name: string, cpf: string, password: string) {
   const supabase = createClient()
   const cleanCpf = cpf.replace(/\D/g, '')
-  const email = `${cleanCpf}@student.ibad.com`
+  const email = `${cleanCpf}@student.avalia.com`
 
   // 1. Verificar se o aluno já existe na tabela de estudantes (mas sem Auth)
   const { data: existingStudent } = await supabase
@@ -325,9 +325,9 @@ export async function loginStudentAuth(identifier: string, password: string) {
       if (!retry.error) return retry.data
     }
 
-    // FALLBACK 2: Tentativa com cashing do domínio (legado)
-    if (finalEmail.endsWith('@student.ibad.com')) {
-      const legacyEmail = finalEmail.replace('@student.ibad.com', '@student.IBAD.com')
+    // FALLBACK 2: Tentativa com cashing do domínio (legado AVALIA)
+    if (finalEmail.endsWith('@student.avalia.com')) {
+      const legacyEmail = finalEmail.replace('@student.avalia.com', '@student.AVALIA.com')
       const { data: retryData, error: retryError } = await supabase.auth.signInWithPassword({ email: legacyEmail, password: cleanPass })
       if (!retryError) return retryData
       
@@ -1401,7 +1401,7 @@ export function calculateFinalGrade(grade: Partial<StudentGrade>, attendanceScor
     const provaOnline = Number(grade.examGrade) || 0;
     const divisor = (Number(grade.customDivisor) && Number(grade.customDivisor) > 0) ? Number(grade.customDivisor) : 2;
     
-    // Fórmula padrão IBAD: (Atividades + Prova) / Divisor
+    // Fórmula padrão AVALIA: (Atividades + Prova) / Divisor
     return Math.round(((notaAtividades + provaOnline) / divisor) * 100) / 100;
 }
 
@@ -1626,7 +1626,7 @@ export async function updateProfileAvatar(userId: string, avatarUrl: string, typ
   await supabase.from(table).update({ avatar_url: avatarUrl }).eq('id', userId)
 }
 
-export async function insertIBADDisciplines(): Promise<void> {
+export async function insertOfficialDisciplines(): Promise<void> {
   const officialNames = [
     "Hermenêutica", "Introdução Bíblica", "Teologia Sistemática", "Pentateuco",
     "Livros Históricos", "Livros Poéticos", "Profetas", "História da Igreja",

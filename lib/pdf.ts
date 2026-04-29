@@ -5,7 +5,8 @@ import type {
   FinancialTransaction, StudentTuition
 } from "./store"
 
-const IBAD_LOGO = "/ibad-logo.png"
+const AVALIA_LOGO = "/avalia-logo.png"
+const BRAND_COLOR = "#10b981" // Emerald Neon
 
 // ——— Helpers ——————————————————————————————————————————————————————————————————————
 
@@ -202,10 +203,10 @@ function getModernTemplate(content: string, title: string, hubName?: string, pag
 </head>
 <body class="${bodyClass}">
     <div class="header">
-        <img src="${IBAD_LOGO}" class="header-logo" alt="IBAD Logo" />
+        <img src="${AVALIA_LOGO}" class="header-logo" alt="AVALIA Logo" />
         <div class="header-info">
-            <div class="institution-name">IBAD - Instituto Bíblico das Assembléias de Deus</div>
-            <div class="hub-name">${hubName || "Núcleo Cosme de Farias"}</div>
+            <div class="institution-name">AVALIA — Inteligência em Gestão de Provas</div>
+            <div class="hub-name">${hubName || "Plataforma de Alta Performance"}</div>
         </div>
     </div>
     
@@ -355,7 +356,7 @@ export function printReceiptPDF(tuition: StudentTuition, student: StudentProfile
 
                 <div class="signature-box">
                     <div class="signature-line">
-                        <p style="font-weight: 700; color: #1e3a5f;">${hubName || "Administração IBAD"}</p>
+                        <p style="font-weight: 700; color: #1e3a5f;">${hubName || "Administração AVALIA"}</p>
                         Assinatura Institucional
                     </div>
                     <div class="signature-line">
@@ -420,7 +421,7 @@ export function printProfessorReceiptPDF(transaction: FinancialTransaction, prof
                 </div>
                 
                 <div style="margin-top: 50px; text-align: center; font-size: 10px; color: #94a3b8;">
-                    Este documento é um comprovante digital de transação efetuada via sistema IBAD.
+                    Este documento é um comprovante digital de transação efetuada via sistema AVALIA.
                 </div>
             </div>
         </div>
