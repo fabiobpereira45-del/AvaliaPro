@@ -5,7 +5,7 @@ import {
   Users, FileText, BookOpen, Settings, BarChart3, Download, LogOut,
   Plus, Pencil, Trash2, Eye, EyeOff, Trophy, CheckCircle2, Link2, FileCheck, DollarSign,
   ShieldCheck, Loader2, MessageSquare, CalendarCheck, GraduationCap, XCircle, ArrowLeft, Building2, UserCircle, Briefcase, Send, PlaySquare, CalendarDays, KeyRound, Save,
-  Menu, ChevronRight, Archive, ArchiveRestore
+  Menu, ChevronRight, Archive, ArchiveRestore, Library
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
