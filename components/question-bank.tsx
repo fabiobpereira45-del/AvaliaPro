@@ -64,6 +64,7 @@ function DisciplineModal({
 }) {
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
+  const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
     if (open) {
@@ -74,13 +75,20 @@ function DisciplineModal({
 
   async function handleSave() {
     if (!name.trim()) return
-    if (discipline) {
-      await updateDiscipline(discipline.id, { name: name.trim(), description: description.trim() || undefined })
-    } else {
-      await addDiscipline(name.trim(), description.trim() || undefined)
+    setIsSaving(true)
+    try {
+      if (discipline) {
+        await updateDiscipline(discipline.id, { name: name.trim(), description: description.trim() || undefined })
+      } else {
+        await addDiscipline(name.trim(), description.trim() || undefined)
+      }
+      onSave()
+      onClose()
+    } catch (err: any) {
+      alert(`Erro ao salvar disciplina: ${err.message}`)
+    } finally {
+      setIsSaving(false)
     }
-    onSave()
-    onClose()
   }
 
   return (
@@ -112,7 +120,9 @@ function DisciplineModal({
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>Cancelar</Button>
-          <Button onClick={handleSave} disabled={!name.trim()}>Salvar</Button>
+          <Button onClick={handleSave} disabled={!name.trim() || isSaving}>
+            {isSaving ? "Salvando..." : "Salvar"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -144,6 +154,7 @@ function QuestionModal({
   ])
   const [correctAnswer, setCorrectAnswer] = useState("")
   const [points, setPoints] = useState(1)
+  const [isSaving, setIsSaving] = useState(false)
 
   useEffect(() => {
     if (!open) return
@@ -227,22 +238,29 @@ function QuestionModal({
 
   async function handleSave() {
     if (!isValid()) return
-    const data = {
-      disciplineId,
-      type,
-      text: text.trim(),
-      choices: (type === "multiple-choice" || type === "incorrect-alternative") ? choices.filter((c) => c.text.trim()) : [],
-      pairs: type === "matching" ? pairs.filter(p => p.left.trim() && p.right.trim()) : [],
-      correctAnswer: type === "discursive" ? "" : correctAnswer,
-      points,
+    setIsSaving(true)
+    try {
+      const data = {
+        disciplineId,
+        type,
+        text: text.trim(),
+        choices: (type === "multiple-choice" || type === "incorrect-alternative") ? choices.filter((c) => c.text.trim()) : [],
+        pairs: type === "matching" ? pairs.filter(p => p.left.trim() && p.right.trim()) : [],
+        correctAnswer: type === "discursive" ? "" : correctAnswer,
+        points,
+      }
+      if (question) {
+        await updateQuestion(question.id, data)
+      } else {
+        await addQuestion(data)
+      }
+      onSave()
+      onClose()
+    } catch (err: any) {
+      alert(`Erro ao salvar questão: ${err.message}`)
+    } finally {
+      setIsSaving(false)
     }
-    if (question) {
-      await updateQuestion(question.id, data)
-    } else {
-      await addQuestion(data)
-    }
-    onSave()
-    onClose()
   }
 
   return (
@@ -416,7 +434,9 @@ function QuestionModal({
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>Cancelar</Button>
-          <Button onClick={handleSave} disabled={!isValid()}>Salvar Questão</Button>
+          <Button onClick={handleSave} disabled={!isValid() || isSaving}>
+            {isSaving ? "Salvando..." : "Salvar Questão"}
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

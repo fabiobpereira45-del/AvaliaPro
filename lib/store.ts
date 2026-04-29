@@ -611,7 +611,8 @@ export async function getBoardMembers(): Promise<BoardMember[]> {
 export async function addDiscipline(name: string, description?: string | null, semesterId?: string | null, professorName?: string | null, dayOfWeek?: string | null, shift?: string | null, order?: number, executionDate?: string | null): Promise<Discipline> {
   const d = { id: uid(), name, description: description || null, semester_id: semesterId || null, professor_name: professorName || null, day_of_week: dayOfWeek || null, shift: shift || null, "order": order || 0, execution_date: executionDate || null, created_at: new Date().toISOString() }
   const supabase = createClient()
-  await supabase.from('disciplines').insert(d)
+  const { error } = await supabase.from('disciplines').insert(d)
+  if (error) throw new Error(error.message)
   return mapDiscipline(d)
 }
 
@@ -627,7 +628,8 @@ export async function updateDiscipline(id: string, data: Partial<Pick<Discipline
   if (data.is_realized !== undefined) updateData.is_realized = data.is_realized
   if (data.executionDate !== undefined) updateData.execution_date = data.executionDate || null
   const supabase = createClient()
-  await supabase.from('disciplines').update(updateData).eq('id', id)
+  const { error } = await supabase.from('disciplines').update(updateData).eq('id', id)
+  if (error) throw new Error(error.message)
 }
 
 export async function deleteDiscipline(id: string): Promise<void> {
@@ -715,12 +717,14 @@ export async function updateQuestion(id: string, data: Partial<Omit<Question, "i
     if (data.pairs && data.pairs.length > 0) val.choices = { options: data.choices || [], matchingPairs: data.pairs }
     else val.choices = data.choices
   }
-  await supabase.from('questions').update(val).eq('id', id)
+  const { error } = await supabase.from('questions').update(val).eq('id', id)
+  if (error) throw new Error(`Erro ao atualizar questão: ${error.message}`)
 }
 
 export async function deleteQuestion(id: string): Promise<void> {
   const supabase = createClient()
-  await supabase.from('questions').delete().eq('id', id)
+  const { error } = await supabase.from('questions').delete().eq('id', id)
+  if (error) throw new Error(`Erro ao excluir questão: ${error.message}`)
 }
 
 export async function deleteQuestions(ids: string[]): Promise<void> {
