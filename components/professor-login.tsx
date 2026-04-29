@@ -123,82 +123,81 @@ export function ProfessorLogin({ onLogin, onBack }: Props) {
   return (
     <div className="w-full max-w-sm mx-auto">
       <div className="text-center mb-10 group">
-        <div className="inline-flex items-center justify-center w-24 h-24 mb-6 rounded-full relative overflow-hidden shadow-xl border border-white/5 transition-transform duration-500 group-hover:scale-105 bg-white">
-          <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity z-20" />
-          <img src="/ibad-logo.png" alt="IBAD" className="w-full h-full object-contain relative z-10 p-2" />
+        <div className="inline-flex items-center justify-center w-24 h-24 mb-6 rounded-[2rem] bg-emerald-neon text-white shadow-xl shadow-emerald-neon/20 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3 relative overflow-hidden">
+           <Sparkles className="h-12 w-12" />
+           <div className="absolute top-0 right-0 w-8 h-8 bg-white/20 rounded-bl-2xl" />
         </div>
-        <h1 className="text-2xl font-extrabold text-foreground tracking-tight leading-tight">Painel do Professor</h1>
-        <p className="text-accent text-[10px] font-bold uppercase tracking-widest mt-2 text-balance leading-relaxed">IBAD - Instituto Bíblico das Assembleias de Deus<br />Núcleo Cosme de Fárias</p>
-        <div className="h-1 w-8 bg-accent mx-auto mt-4 rounded-full" />
+        <h1 className="text-3xl font-black text-white tracking-tighter leading-tight">Painel Docente</h1>
+        <p className="text-emerald-neon text-[10px] font-black uppercase tracking-[0.2em] mt-3 text-balance leading-relaxed">AVALIA — Gestão de Provas e Avaliações</p>
+        <div className="h-1.5 w-12 bg-emerald-neon mx-auto mt-6 rounded-full shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
       </div>
 
-      <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
+      <div className="bg-[#020617] border border-white/5 rounded-[2.5rem] p-8 shadow-2xl">
         {/* Forgot Password */}
         {isForgot ? (
-          <form onSubmit={handleForgotPassword} className="flex flex-col gap-4">
+          <form onSubmit={handleForgotPassword} className="flex flex-col gap-6">
             <div className="text-center">
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-accent/10 mb-2">
-                <KeyRound className="h-5 w-5 text-accent" />
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-emerald-neon/10 mb-4 shadow-inner">
+                <KeyRound className="h-6 w-6 text-emerald-neon" />
               </div>
-              <h2 className="font-semibold text-foreground">Recuperar Senha</h2>
-              <p className="text-xs text-muted-foreground mt-1">Enviaremos um link de recuperação para seu e-mail</p>
+              <h2 className="font-black text-xl text-white tracking-tight">Recuperar Senha</h2>
+              <p className="text-xs text-slate-500 mt-2 font-medium">Enviaremos as instruções para seu e-mail</p>
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="forgot-email" className="text-sm font-medium">E-mail</Label>
+              <Label htmlFor="forgot-email" className="text-[10px] font-black uppercase tracking-widest text-emerald-neon ml-1">E-mail Corporativo</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                <Input id="forgot-email" type="email" placeholder="professor@ibad.com" value={email} onChange={e => setEmail(e.target.value)} className="pl-9" required autoFocus />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 pointer-events-none" />
+                <Input id="forgot-email" type="email" placeholder="nome@avalia.com" value={email} onChange={e => setEmail(e.target.value)} className="h-14 pl-12 bg-white/5 border-white/10 text-white rounded-xl focus:ring-emerald-neon" required autoFocus />
               </div>
             </div>
-            {error && <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">{error}</p>}
-            {message && <p className="text-sm text-green-600 bg-green-50 rounded-lg px-3 py-2 flex items-center gap-2"><CheckCircle2 className="h-4 w-4 shrink-0" />{message}</p>}
-            <Button type="submit" className="w-full font-semibold" disabled={loading}>
-              {loading ? "Enviando..." : "Enviar link de recuperação"}
+            {error && <p className="text-xs text-orange-vibrant font-bold bg-orange-vibrant/5 rounded-xl px-4 py-3 border border-orange-vibrant/20">{error}</p>}
+            {message && <p className="text-xs text-emerald-neon font-bold bg-emerald-neon/5 rounded-xl px-4 py-3 flex items-center gap-2 border border-emerald-neon/20"><CheckCircle2 className="h-4 w-4 shrink-0" />{message}</p>}
+            <Button type="submit" className="vibrant-button-emerald h-14 font-black text-sm" disabled={loading}>
+              {loading ? "Processando..." : "ENVIAR RECUPERAÇÃO"}
             </Button>
-            <button type="button" onClick={reset} className="text-sm text-primary hover:underline text-center transition-all">← Voltar ao login</button>
+            <button type="button" onClick={reset} className="text-xs font-bold text-slate-500 hover:text-white transition-all uppercase tracking-widest mt-2">← Cancelar</button>
           </form>
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
             {isSignUp && (
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="prof-name" className="text-sm font-medium">Nome Completo</Label>
+                <Label htmlFor="prof-name" className="text-[10px] font-black uppercase tracking-widest text-emerald-neon ml-1">Nome Completo</Label>
                 <div className="relative">
-                  <Input id="prof-name" type="text" placeholder="Seu nome" value={name} onChange={e => setName(e.target.value)} required={isSignUp} />
+                  <Input id="prof-name" type="text" placeholder="Seu nome" value={name} onChange={e => setName(e.target.value)} required={isSignUp} className="h-14 bg-white/5 border-white/10 text-white rounded-xl focus:ring-emerald-neon" />
                 </div>
               </div>
             )}
             <div className="flex flex-col gap-1.5">
-              <Label htmlFor="prof-email" className="text-sm font-medium">E-mail</Label>
+              <Label htmlFor="prof-email" className="text-[10px] font-black uppercase tracking-widest text-emerald-neon ml-1">E-mail de Acesso</Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                <Input id="prof-email" type="email" placeholder="professor@ibad.com" value={email} onChange={e => setEmail(e.target.value)} className="pl-9" required autoFocus />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 pointer-events-none" />
+                <Input id="prof-email" type="email" placeholder="professor@avalia.com" value={email} onChange={e => setEmail(e.target.value)} className="h-14 pl-12 bg-white/5 border-white/10 text-white rounded-xl focus:ring-emerald-neon" required autoFocus />
               </div>
             </div>
             <div className="flex flex-col gap-1.5">
               <div className="flex items-center justify-between">
-                <Label htmlFor="prof-password" className="text-sm font-medium">Senha</Label>
+                <Label htmlFor="prof-password" className="text-[10px] font-black uppercase tracking-widest text-emerald-neon ml-1">Senha</Label>
                 {!isSignUp && (
-                  <button type="button" onClick={() => { setIsForgot(true); setError(""); setMessage("") }} className="text-xs text-primary hover:underline transition-colors">
-                    Esqueci minha senha
+                  <button type="button" onClick={() => { setIsForgot(true); setError(""); setMessage("") }} className="text-[10px] font-black text-slate-500 hover:text-emerald-neon transition-colors uppercase tracking-widest">
+                    Esqueci a senha
                   </button>
                 )}
               </div>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                <Input id="prof-password" type={showPassword ? "text" : "password"} placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} className="pl-9 pr-10" required />
-                <button type="button" onClick={() => setShowPassword(p => !p)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors" aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}>
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 pointer-events-none" />
+                <Input id="prof-password" type={showPassword ? "text" : "password"} placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} className="h-14 pl-12 pr-12 bg-white/5 border-white/10 text-white rounded-xl focus:ring-emerald-neon" required />
+                <button type="button" onClick={() => setShowPassword(p => !p)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white transition-colors" aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}>
+                  {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                 </button>
               </div>
             </div>
-            {error && <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">{error}</p>}
-            {message && <p className="text-sm text-green-600 bg-green-50 rounded-lg px-3 py-2">{message}</p>}
-            <Button type="submit" className="w-full mt-2 font-semibold" disabled={loading}>
-              {loading ? "Processando..." : isSignUp ? <><UserPlus className="w-4 h-4 mr-2" /> Criar Conta</> : <><LogIn className="w-4 h-4 mr-2" /> Entrar</>}
+            {error && <p className="text-xs text-orange-vibrant font-bold bg-orange-vibrant/5 rounded-xl px-4 py-3 border border-orange-vibrant/20">{error}</p>}
+            <Button type="submit" className="vibrant-button-emerald h-16 font-black text-sm uppercase tracking-widest mt-2" disabled={loading}>
+              {loading ? "Verificando..." : isSignUp ? "CRIAR CONTA DOCENTE" : "ENTRAR NO PAINEL"}
             </Button>
             <div className="text-center mt-2">
-              <button type="button" onClick={() => { setIsSignUp(!isSignUp); setError(""); setMessage("") }} className="text-sm text-primary hover:underline transition-all">
-                {isSignUp ? "Já tenho uma conta. Fazer Login." : "Não tem conta? Criar nova conta."}
+              <button type="button" onClick={() => { setIsSignUp(!isSignUp); setError(""); setMessage("") }} className="text-[10px] font-black text-slate-500 hover:text-emerald-neon transition-all uppercase tracking-widest">
+                {isSignUp ? "Já tenho acesso. Login." : "Solicitar novo acesso docente"}
               </button>
             </div>
           </form>

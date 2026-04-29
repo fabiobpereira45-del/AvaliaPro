@@ -37,10 +37,13 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --navy: #0f172a;
-  --navy-light: #1e293b;
-  --accent-gold: #b45309;
-  --maroon-dark: #450a0a;
+  --navy: #020617;
+  --navy-light: #0f172a;
+  --emerald-neon: #10b981;
+  --emerald-glow: rgba(16, 185, 129, 0.2);
+  --orange-vibrant: #f59e0b;
+  --orange-glow: rgba(245, 158, 11, 0.2);
+  --slate-dark: #1e293b;
 }
 
 .dark {
@@ -120,7 +123,9 @@
   --color-maroon-dark: var(--maroon-dark);
   --color-navy: var(--navy);
   --color-navy-light: var(--navy-light);
-  --color-accent-gold: var(--accent-gold);
+  --color-emerald-neon: var(--emerald-neon);
+  --color-orange-vibrant: var(--orange-vibrant);
+  --color-slate-dark: var(--slate-dark);
 }
 
 @layer base {
@@ -130,5 +135,27 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .vibrant-button-emerald {
+    @apply bg-emerald-neon text-white hover:bg-emerald-neon/90 shadow-lg shadow-emerald-neon/20 transition-all active:scale-95;
+  }
+  
+  .vibrant-button-orange {
+    @apply bg-orange-vibrant text-white hover:bg-orange-vibrant/90 shadow-lg shadow-orange-vibrant/20 transition-all active:scale-95;
+  }
+
+  .accent-gradient {
+    @apply bg-gradient-to-br from-emerald-neon to-emerald-neon/70;
+  }
+
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl;
+  }
+
+  .premium-sidebar {
+    @apply bg-[#020617] border-r border-white/5;
   }
 }

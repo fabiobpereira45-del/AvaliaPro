@@ -126,11 +126,7 @@ export function StudentGradesView({ studentId, studentEmail, studentDoc }: Props
     }
 
     const calculateDynamicGrade = (grade: StudentGrade) => {
-        if (!gradingSettings) return { presencialScore: 0, onlineScore: 0, videoAula: 0, leituraLivro: 0, questionarioLivro: 0, notaAtividades: 0, examGrade: 0, media: 0 }
-        
         let finalExamGrade = grade.examGrade || 0;
-        let presencialCount = 0;
-        let onlineCount = 0;
 
         // Dynamic Exam Grade from Submissions
         if (grade.disciplineId) {
@@ -147,29 +143,19 @@ export function StudentGradesView({ studentId, studentEmail, studentDoc }: Props
                     return rawScore;
                 }));
             }
-
-            // Attendance Count
-            const disciplineAtts = attendances.filter(a => a.disciplineId === grade.disciplineId && a.isPresent);
-            presencialCount = new Set(disciplineAtts.filter(a => (a.type || 'presencial') === 'presencial').map(a => a.date)).size;
-            onlineCount = new Set(disciplineAtts.filter(a => a.type === 'ead').map(a => a.date)).size;
         }
 
-        const attendanceScore = calculateAttendanceScore(presencialCount, onlineCount, gradingSettings);
-        const media = calculateFinalGrade({ ...grade, examGrade: finalExamGrade }, attendanceScore);
-
         const videoAula = grade.participationBonus || 0;
-        const leituraLivro = grade.worksGrade || 0;
-        const questionarioLivro = grade.seminarGrade || 0;
+        const works = grade.worksGrade || 0;
+        const seminar = grade.seminarGrade || 0;
 
-        const notaAtividades = Math.round((attendanceScore + videoAula + leituraLivro + questionarioLivro) * 100) / 100;
+        // Média simplificada focada em Prova
+        const media = finalExamGrade;
 
         return {
-            presencialScore: presencialCount * (gradingSettings.pointsPerPresence || 3),
-            onlineScore: onlineCount * (gradingSettings.onlinePresencePoints || 2),
             videoAula,
-            leituraLivro,
-            questionarioLivro,
-            notaAtividades: Math.min(notaAtividades, 10),
+            works,
+            seminar,
             examGrade: finalExamGrade,
             media,
         }
@@ -179,25 +165,28 @@ export function StudentGradesView({ studentId, studentEmail, studentDoc }: Props
         <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
             {/* Resumo de Destaque */}
-            <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 flex flex-col md:flex-row items-center gap-6 shadow-sm">
-                <div className="h-16 w-16 bg-primary text-primary-foreground rounded-2xl flex items-center justify-center shadow-lg">
-                    <Award className="h-8 w-8" />
+            <div className="glass-card p-8 flex flex-col md:flex-row items-center gap-8 shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-neon/10 rounded-full -mr-16 -mt-16 blur-2xl" />
+                <div className="h-20 w-20 bg-emerald-neon text-white rounded-3xl flex items-center justify-center shadow-xl shadow-emerald-neon/20 animate-pulse">
+                    <Award className="h-10 w-10" />
                 </div>
                 <div className="flex-1 text-center md:text-left">
-                    <h3 className="text-xl font-bold text-foreground">Meu Desempenho Oficial</h3>
-                    <p className="text-sm text-muted-foreground">Aqui você encontra as notas finais lançadas e validadas pela secretaria e professores.</p>
+                    <h3 className="text-2xl font-black text-white tracking-tight">Desempenho Acadêmico</h3>
+                    <p className="text-emerald-neon/60 text-sm font-bold uppercase tracking-widest mt-1">Resultados Oficiais das Avaliações</p>
                 </div>
-                <div className="flex gap-4">
+                <div className="flex gap-6">
                     <div className="text-center">
-                        <div className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest mb-1">Disciplinas</div>
-                        <div className="text-2xl font-black text-primary">{officialGrades.length}</div>
+                        <div className="text-[10px] uppercase font-black text-slate-500 tracking-[0.2em] mb-1">Módulos</div>
+                        <div className="text-4xl font-black text-white">{officialGrades.length}</div>
                     </div>
                 </div>
             </div>
 
             <div className="flex flex-col gap-6">
-                <h3 className="text-xl font-bold font-serif text-foreground border-b border-border pb-2 flex items-center gap-2">
-                    <Calculator className="h-5 w-5 text-primary" />
+                <h3 className="text-xl font-black text-white border-b border-white/5 pb-4 flex items-center gap-3">
+                    <div className="p-2 bg-white/5 rounded-lg">
+                        <Calculator className="h-5 w-5 text-emerald-neon" />
+                    </div>
                     Boletim de Notas
                 </h3>
 
@@ -222,60 +211,58 @@ export function StudentGradesView({ studentId, studentEmail, studentDoc }: Props
                             const examReleased = grade.isReleased && (grade.examGrade > 0 || dyn.examGrade > 0)
 
                             return (
-                                <div key={grade.id} className="bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
-                                    <div className="flex flex-col md:flex-row justify-between gap-4 mb-4">
-                                        <div className="space-y-1">
-                                            <h4 className="font-bold text-lg text-foreground">{disc?.name || "Disciplina Geral"}</h4>
-                                            <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Semestre: {semesters.find(s => s.id === disc?.semesterId)?.name || "N/A"}</p>
+                                <div key={grade.id} className="bg-[#0f172a] border border-white/5 rounded-3xl p-8 shadow-xl hover:border-emerald-neon/40 transition-all group relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-neon/5 to-transparent rounded-bl-full" />
+                                    <div className="flex flex-col md:flex-row justify-between gap-6 mb-8 relative z-10">
+                                        <div className="space-y-2">
+                                            <h4 className="font-black text-2xl text-white tracking-tight">{disc?.name || "Disciplina Geral"}</h4>
+                                            <p className="text-[10px] text-emerald-neon/60 uppercase tracking-[0.2em] font-black">
+                                                {semesters.find(s => s.id === disc?.semesterId)?.name || "Módulo Atual"}
+                                            </p>
                                         </div>
-
-                                        <div className="flex items-center gap-4 bg-muted/50 p-3 rounded-xl border border-border">
+ 
+                                        <div className="flex items-center gap-6 bg-white/5 p-4 rounded-2xl border border-white/5 backdrop-blur-md">
                                             <div className="text-right">
-                                                <div className="text-[10px] uppercase font-bold text-muted-foreground">Média Final</div>
-                                                <div className={`text-2xl font-black ${isPassing ? 'text-green-600' : 'text-amber-600'}`}>
-                                                    {dyn.media.toFixed(2)}
+                                                <div className="text-[10px] uppercase font-black text-slate-500 tracking-widest">Resultado Final</div>
+                                                <div className={`text-4xl font-black ${isPassing ? 'text-emerald-neon' : 'text-orange-vibrant'}`}>
+                                                    {dyn.media.toFixed(1)}
                                                 </div>
                                             </div>
-                                            <div className={`h-10 w-10 border rounded-full flex items-center justify-center ${isPassing ? 'bg-green-100 text-green-600 border-green-200' : 'bg-red-100 text-red-600 border-red-200'}`}>
-                                                {isPassing ? <CheckCircle2 className="h-6 w-6" /> : <Award className="h-6 w-6" />}
+                                            <div className={`h-14 w-14 border rounded-2xl flex items-center justify-center shadow-lg ${isPassing ? 'bg-emerald-neon/10 text-emerald-neon border-emerald-neon/20' : 'bg-orange-vibrant/10 text-orange-vibrant border-orange-vibrant/20'}`}>
+                                                {isPassing ? <CheckCircle2 className="h-8 w-8" /> : <Award className="h-8 w-8" />}
                                             </div>
                                         </div>
                                     </div>
                                     
-                                    <div className={`mb-4 text-sm font-bold p-3 rounded-lg flex items-center gap-2 ${isPassing ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                                        <CheckCircle2 className="h-5 w-5" />
-                                        {isPassing ? 'Aprovado' : 'Reprovado'}
+                                    <div className={`mb-8 text-xs font-black p-4 rounded-2xl flex items-center gap-3 uppercase tracking-widest ${isPassing ? 'bg-emerald-neon/10 text-emerald-neon' : 'bg-orange-vibrant/10 text-orange-vibrant'}`}>
+                                        <div className={cn("w-2 h-2 rounded-full animate-pulse", isPassing ? "bg-emerald-neon" : "bg-orange-vibrant")} />
+                                        {isPassing ? 'Aprovado' : 'Aguardando Pontuação'}
                                     </div>
-
-                                    {/* Nota das Atividades - Breakdown */}
-                                    <div className="mb-4">
-                                        <div className="text-[10px] uppercase font-bold text-blue-600 tracking-wider mb-2">📋 Composição das Notas de Atividades</div>
-                                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
-                                            <div className="bg-emerald-50 border border-emerald-100 rounded-lg p-3 text-center">
-                                                <div className="text-[9px] text-emerald-600 font-bold uppercase mb-1">📍 Presencial</div>
-                                                <div className="font-black text-emerald-700 text-lg">{dyn.presencialScore.toFixed(1)}</div>
-                                                <div className="text-[9px] text-emerald-500">máx {gradingSettings?.pointsPerPresence || 3}</div>
-                                            </div>
-                                            <div className="bg-sky-50 border border-sky-100 rounded-lg p-3 text-center">
-                                                <div className="text-[9px] text-sky-600 font-bold uppercase mb-1">💻 Online</div>
-                                                <div className="font-black text-sky-700 text-lg">{dyn.onlineScore.toFixed(1)}</div>
-                                                <div className="text-[9px] text-sky-500">máx {gradingSettings?.onlinePresencePoints || 2}</div>
-                                            </div>
-                                            <div className="bg-purple-50 border border-purple-100 rounded-lg p-3 text-center">
-                                                <div className="text-[9px] text-purple-600 font-bold uppercase mb-1">🎬 Vídeo Aula</div>
-                                                <div className="font-black text-purple-700 text-lg">{dyn.videoAula.toFixed(1)}</div>
-                                                <div className="text-[9px] text-purple-500">máx {gradingSettings?.interactionPoints || 1}</div>
-                                            </div>
-                                            <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 text-center">
-                                                <div className="text-[9px] text-amber-600 font-bold uppercase mb-1">📖 Leitura</div>
-                                                <div className="font-black text-amber-700 text-lg">{dyn.leituraLivro.toFixed(1)}</div>
-                                                <div className="text-[9px] text-amber-500">máx {gradingSettings?.bookActivityPoints || 3}</div>
-                                            </div>
-                                            <div className="bg-rose-50 border border-rose-100 rounded-lg p-3 text-center">
-                                                <div className="text-[9px] text-rose-600 font-bold uppercase mb-1">❓ Questionário</div>
-                                                <div className="font-black text-rose-700 text-lg">{dyn.questionarioLivro.toFixed(1)}</div>
-                                                <div className="text-[9px] text-rose-500">máx 1</div>
-                                            </div>
+ 
+                                    {/* Nota das Atividades - Simplified for Assessment Focus */}
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                        <div className="bg-white/5 border border-white/5 rounded-2xl p-5 group-hover:bg-white/10 transition-all">
+                                            <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-2">Prova Online</div>
+                                            {examReleased ? (
+                                                <div className="font-black text-white text-2xl">{dyn.examGrade.toFixed(1)}</div>
+                                            ) : (
+                                                <div className="flex items-center gap-2 text-slate-600">
+                                                    <Lock className="h-4 w-4" />
+                                                    <span className="text-[10px] font-bold uppercase">Privado</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="bg-white/5 border border-white/5 rounded-2xl p-5">
+                                            <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-2">Trabalhos</div>
+                                            <div className="font-black text-white text-2xl">{dyn.works.toFixed(1)}</div>
+                                        </div>
+                                        <div className="bg-white/5 border border-white/5 rounded-2xl p-5">
+                                            <div className="text-[10px] text-slate-500 font-black uppercase tracking-widest mb-2">Seminários</div>
+                                            <div className="font-black text-white text-2xl">{dyn.seminar.toFixed(1)}</div>
+                                        </div>
+                                        <div className="bg-emerald-neon/5 border border-emerald-neon/20 rounded-2xl p-5">
+                                            <div className="text-[10px] text-emerald-neon font-black uppercase tracking-widest mb-2">Bonus Part.</div>
+                                            <div className="font-black text-emerald-neon text-2xl">{dyn.videoAula.toFixed(1)}</div>
                                         </div>
                                     </div>
 

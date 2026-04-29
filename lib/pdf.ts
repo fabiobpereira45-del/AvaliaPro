@@ -42,6 +42,10 @@ function getAnswerLabel(answer: string, question: Question): string {
 function getCorrectLabel(question: Question): string {
   if (question.type === "true-false") return question.correctAnswer === "true" ? "Verdadeiro" : "Falso"
   if (question.type === "discursive") return "Questão discursiva — correção manual"
+  if (question.type === "fill-in-the-blank") return "Gabarito no Enunciado [[...]]"
+  if (question.type === "matching") {
+    return (question.pairs || []).map(p => `${p.left} → ${p.right}`).join(" | ")
+  }
   const choice = (question.choices || []).find((c) => c.id === question.correctAnswer)
   return choice ? choice.text : "—"
 }
@@ -49,6 +53,9 @@ function getCorrectLabel(question: Question): string {
 function typeLabel(type: Question["type"]): string {
   if (type === "multiple-choice") return "Múltipla Escolha"
   if (type === "true-false") return "Verdadeiro ou Falso"
+  if (type === "incorrect-alternative") return "Escolha a Incorreta"
+  if (type === "fill-in-the-blank") return "Completar Lacunas"
+  if (type === "matching") return "Relacionar Colunas"
   return "Discursiva"
 }
 
@@ -938,4 +945,49 @@ export function printProLaboreReportPDF(disciplines: Discipline[], transactions:
     <table><thead><tr><th>#</th><th>Período</th><th>Disciplina</th><th>Professor</th><th style="text-align:right;">Valor Pago</th><th>Status</th></tr></thead>
     <tbody>${rows || '<tr><td colspan="6" style="text-align:center;">Nenhum registro encontrado</td></tr>'}</tbody></table>`
   safePrint(getModernTemplate(content, `Relatório de Pro-labore${filters?.monthYear ? ' — ' + filters.monthYear : ''}`, hubName), existingWin)
+}
+
+export function printQuestionBankPDF(questions: Question[], disciplineName: string, categoryFilter: string = "all", hubName?: string, existingWin?: Window | null): void {
+  const list = Array.isArray(questions) ? questions : []
+  const filtered = categoryFilter === "all" ? list : list.filter(q => q.type === categoryFilter)
+  
+  const rows = filtered.map((q, i) => {
+    let detailHtml = ""
+    if (q.type === "multiple-choice" || q.type === "incorrect-alternative") {
+      detailHtml = `<ul style="margin:5px 0; padding-left:20px; font-size:11px;">
+        ${(q.choices || []).map(c => `<li style="${c.id === q.correctAnswer ? 'font-weight:bold; color:#166534;' : ''}">(${String.fromCharCode(65 + (q.choices || []).indexOf(c))}) ${c.text} ${c.id === q.correctAnswer ? '✓' : ''}</li>`).join('')}
+      </ul>`
+    } else if (q.type === "true-false") {
+      detailHtml = `<p style="font-size:11px; margin-top:5px;">Resposta: <strong>${q.correctAnswer === 'true' ? 'Verdadeiro' : 'Falso'}</strong></p>`
+    } else if (q.type === "matching") {
+      detailHtml = `<div style="margin-top:5px; font-size:11px;">
+        ${(q.pairs || []).map(p => `<div>• ${p.left} <span style="color:#64748b;">→</span> ${p.right}</div>`).join('')}
+      </div>`
+    }
+
+    return `
+      <div style="margin-bottom:20px; padding:15px; border:1px solid #e2e8f0; border-radius:10px; break-inside:avoid;">
+        <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+          <span style="font-size:10px; font-weight:800; color:#64748b; text-transform:uppercase;">${i+1} • ${typeLabel(q.type)}</span>
+          <span style="font-size:10px; font-weight:700; color:#1e3a5f;">${q.points} pts</span>
+        </div>
+        <p style="font-size:13px; font-weight:600; color:#1e3a5f; margin-bottom:10px;">${q.text}</p>
+        ${detailHtml}
+      </div>
+    `
+  }).join('')
+
+  const content = `
+    <div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid #e2e8f0; margin-bottom:30px;">
+      <h2 style="margin:0; font-size:14px; color:#64748b; text-transform:uppercase;">Disciplina</h2>
+      <p style="font-size:22px; font-weight:800; color:#1e3a5f; margin:5px 0;">${disciplineName}</p>
+      <div style="display:flex; gap:15px; margin-top:10px;">
+        <span style="font-size:11px; background:#e2e8f0; padding:3px 10px; border-radius:10px;">Total: ${filtered.length} questões</span>
+        ${categoryFilter !== 'all' ? `<span style="font-size:11px; background:#fef3c7; color:#92400e; padding:3px 10px; border-radius:10px;">Filtro: ${typeLabel(categoryFilter as any)}</span>` : ''}
+      </div>
+    </div>
+    ${rows || '<p style="text-align:center; padding:40px; color:#64748b;">Nenhuma questão encontrada com este filtro.</p>'}
+  `
+  
+  safePrint(getModernTemplate(content, `Banco de Questões - ${disciplineName}`, hubName), existingWin)
 }

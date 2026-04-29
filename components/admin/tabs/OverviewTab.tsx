@@ -54,34 +54,31 @@ export function OverviewTab({ assessments, submissions, questions, disciplines }
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex justify-between items-center glass rounded-2xl p-6 premium-shadow">
+      <div className="flex justify-between items-center glass-card p-8">
         <div>
-          <h2 className="text-xl font-bold font-serif text-foreground">Visão Geral</h2>
-          <p className="text-muted-foreground text-sm">Resumo de desempenho e estatísticas</p>
+          <h2 className="text-2xl font-black text-white tracking-tight">Painel de Controle</h2>
+          <p className="text-emerald-neon/80 text-sm font-medium uppercase tracking-widest mt-1">Gestão Estratégica de Avaliações</p>
         </div>
         <Button
-          variant="outline"
           onClick={() => printOverviewPDF({ assessments, submissions, questions })}
-          className="rounded-xl"
+          className="vibrant-button-emerald px-6"
         >
-          <Download className="h-4 w-4 mr-2" /> Baixar Relatório PDF
+          <Download className="h-4 w-4 mr-2" /> Relatório Consolidado
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "Questões no Banco", value: questions.length, icon: <BookOpen className="h-5 w-5" />, color: "text-orange" },
-          { label: "Provas Criadas", value: assessments.length, icon: <FileText className="h-5 w-5" />, color: "text-navy" },
-          { label: "Entregas Realizadas", value: submissions.length, icon: <Users className="h-5 w-5" />, color: "text-purple-600" },
-          { label: "Média Global (Pts)", value: avgScore.toFixed(1), icon: <BarChart3 className="h-5 w-5" />, color: "text-muted-foreground" },
-        ].map(({ label, value, icon, color }) => (
-          <div key={label} className="bg-card border border-border/50 rounded-2xl p-6 hover-lift premium-shadow group">
-            <div className={`${color} mb-4 p-3 rounded-xl bg-muted group-hover:bg-white transition-colors w-12 h-12 flex items-center justify-center`}>{icon}</div>
-            <div className="text-3xl font-bold text-foreground tracking-tight">{value}</div>
-            <div className="text-sm font-medium text-muted-foreground mt-1">{label}</div>
+          { label: "Acervo de Questões", value: questions.length, icon: <BookOpen className="h-5 w-5" />, color: "text-emerald-neon", bg: "bg-emerald-neon/10" },
+          { label: "Exames Estruturados", value: assessments.length, icon: <FileText className="h-5 w-5" />, color: "text-orange-vibrant", bg: "bg-orange-vibrant/10" },
+          { label: "Submissões Ativas", value: submissions.length, icon: <Users className="h-5 w-5" />, color: "text-blue-400", bg: "bg-blue-400/10" },
+          { label: "Média Global (Pts)", value: avgScore.toFixed(1), icon: <BarChart3 className="h-5 w-5" />, color: "text-white", bg: "bg-white/10" },
+        ].map(({ label, value, icon, color, bg }) => (
+          <div key={label} className="bg-[#0f172a] border border-white/5 rounded-3xl p-6 hover:border-emerald-neon/50 transition-all group">
+            <div className={`${color} ${bg} mb-4 p-3 rounded-2xl transition-all group-hover:scale-110 w-12 h-12 flex items-center justify-center`}>{icon}</div>
+            <div className="text-4xl font-black text-white tracking-tighter">{value}</div>
+            <div className="text-[10px] font-black text-emerald-neon/60 uppercase tracking-widest mt-2">{label}</div>
           </div>
         ))}
-      </div>
 
       {assessments.length > 0 && (
         <div className="flex flex-col sm:flex-row gap-4 items-center justify-between bg-card border border-border/50 rounded-2xl p-6 premium-shadow">

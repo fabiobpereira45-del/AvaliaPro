@@ -234,37 +234,37 @@ export function AssessmentBuilder({ open, assessment, onClose, onSave }: Props) 
 
     setSaving(true)
     try {
-      if (assessment) {
-        await updateAssessment(assessment.id, {
-          title: title.trim(),
-          disciplineId,
-          professor: professorName,
-          logoBase64,
-          rules: rules.trim(),
-          questionIds: finalIds,
-          pointsPerQuestion,
-          totalPoints: totalPointsNum,
-          modality,
-          timeLimitMinutes: timeLimitMinutes > 0 ? timeLimitMinutes : null,
-        })
-      } else {
-        await addAssessment({
-          title: title.trim(),
-          disciplineId,
-          professor: professorName,
-          institution: "Instituto Bíblico das Assembléias de Deus",
-          logoBase64,
-          rules: rules.trim(),
-          questionIds: finalIds,
-          pointsPerQuestion,
-          totalPoints: totalPointsNum,
-          openAt: null,
-          closeAt: null,
-          isPublished: false,
-          modality,
-          timeLimitMinutes: timeLimitMinutes > 0 ? timeLimitMinutes : null,
-        })
-      }
+        if (assessment) {
+          await updateAssessment(assessment.id, {
+            title: title.trim(),
+            disciplineId,
+            professor: professorName,
+            logoBase64,
+            rules: rules.trim(),
+            questionIds: finalIds,
+            pointsPerQuestion,
+            totalPoints: totalPointsNum,
+            modality,
+            timeLimitMinutes: timeLimitMinutes > 0 ? timeLimitMinutes : null,
+          })
+        } else {
+          await addAssessment({
+            title: title.trim(),
+            disciplineId,
+            professor: professorName,
+            institution: "AVALIA — Gestão de Provas",
+            logoBase64,
+            rules: rules.trim(),
+            questionIds: finalIds,
+            pointsPerQuestion,
+            totalPoints: totalPointsNum,
+            openAt: null,
+            closeAt: null,
+            isPublished: false,
+            modality,
+            timeLimitMinutes: timeLimitMinutes > 0 ? timeLimitMinutes : null,
+          })
+        }
 
       onSave()
       onClose()
@@ -291,11 +291,11 @@ export function AssessmentBuilder({ open, assessment, onClose, onSave }: Props) 
         <div className="flex items-center gap-2 px-1 py-4 sm:py-2 flex-wrap sm:flex-nowrap">
           {[1, 2, 3, 4].map((s) => (
             <div key={s} className="flex items-center gap-2 flex-1 min-w-[120px]">
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 transition-colors ${step > s ? "bg-primary text-primary-foreground" :
-                step === s ? "bg-primary text-primary-foreground" :
-                  "bg-muted text-muted-foreground"
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 transition-all ${step > s ? "bg-emerald-neon text-white shadow-lg shadow-emerald-neon/20" :
+                step === s ? "bg-emerald-neon text-white shadow-lg shadow-emerald-neon/30 scale-110" :
+                  "bg-white/5 text-slate-500 border border-white/10"
                 }`}>
-                {step > s ? <Check className="h-3.5 w-3.5" /> : s}
+                {step > s ? <Check className="h-4 w-4" /> : s}
               </div>
               <span className={`text-[11px] sm:text-xs font-medium ${step === s ? "text-foreground" : "text-muted-foreground"}`}>
                 {s === 1 ? "Título" : s === 2 ? "Formato" : s === 3 ? "Questões" : "Visualizar"}
@@ -612,9 +612,9 @@ export function AssessmentBuilder({ open, assessment, onClose, onSave }: Props) 
                     <img src={logoBase64} alt="Logo" className="w-20 h-20 object-contain" />
                   )}
                   <div className="flex-1 flex flex-col items-center justify-center text-center">
-                    <h1 className="text-xl md:text-2xl font-bold uppercase tracking-wide">Instituto de Ensino Teológico — IBAD</h1>
-                    <p className="text-sm font-semibold uppercase mt-1">
-                      Avaliação {selectedDisc ? `— ${selectedDisc.name}` : ""}
+                    <h1 className="text-xl md:text-2xl font-black uppercase tracking-tighter text-emerald-neon">AVALIA — Gestão de Provas</h1>
+                    <p className="text-xs font-bold uppercase mt-1 text-slate-500">
+                      Plataforma de Avaliação Educacional
                     </p>
                   </div>
                 </div>
@@ -749,11 +749,12 @@ export function AssessmentBuilder({ open, assessment, onClose, onSave }: Props) 
             <Button
               onClick={handleNext}
               disabled={step === 1 ? !canProceedStep1() : step === 2 ? !canProceedStep2() : (selectionMode === "manual" && !canProceedStep3())}
+              className="vibrant-button-emerald px-8"
             >
               Próximo <ChevronRight className="h-4 w-4 ml-1" />
             </Button>
           ) : (
-            <Button onClick={handleSave} disabled={saving}>
+            <Button onClick={handleSave} disabled={saving} className="vibrant-button-emerald px-8">
               {saving ? (
                 <>
                   <RefreshCw className="h-4 w-4 mr-1.5 animate-spin" />

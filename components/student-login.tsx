@@ -129,13 +129,13 @@ export function StudentLogin({ onLogin, onResult, onBack, preloadedAssessmentId 
   if (isInitializing) {
     return (
       <div className="flex flex-col justify-center items-center py-32 gap-4">
-        <div className="relative flex h-16 w-16">
-          <div className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-20" />
-          <div className="relative inline-flex h-16 w-16 items-center justify-center rounded-full bg-primary text-white shadow-xl">
-            <BookOpenCheck className="h-8 w-8 animate-pulse" />
+        <div className="relative flex h-20 w-20">
+          <div className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-neon opacity-20" />
+          <div className="relative inline-flex h-20 w-20 items-center justify-center rounded-2xl bg-emerald-neon text-white shadow-2xl">
+            <BookOpenCheck className="h-10 w-10 animate-pulse" />
           </div>
         </div>
-        <p className="text-muted-foreground font-medium animate-pulse">Carregando portal...</p>
+        <p className="text-emerald-neon font-black uppercase tracking-widest text-xs animate-pulse">Iniciando Ambiente AVALIA...</p>
       </div>
     )
   }
@@ -149,40 +149,38 @@ export function StudentLogin({ onLogin, onResult, onBack, preloadedAssessmentId 
     <div className="flex flex-col items-center max-w-xl mx-auto w-full gap-8 relative z-10">
       {/* Premium Hero Card */}
       {assessment ? (
-        <div className="w-full rounded-[2rem] premium-gradient text-white p-8 sm:p-10 flex flex-col items-center gap-6 text-center premium-shadow border border-white/10 relative overflow-hidden group">
+        <div className="w-full rounded-[2.5rem] bg-[#020617] text-white p-10 flex flex-col items-center gap-8 text-center shadow-2xl border border-white/5 relative overflow-hidden group">
           {/* Decorative background objects */}
-          <div className="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-[80px] -mr-32 -mt-32 transition-transform duration-700 group-hover:scale-110" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-blue-500/20 rounded-full blur-[60px] -ml-24 -mb-24 transition-transform duration-700 group-hover:scale-110" />
+          <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-neon/20 rounded-full blur-[100px] -mr-40 -mt-40 transition-all duration-1000 group-hover:bg-emerald-neon/30" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-vibrant/10 rounded-full blur-[80px] -ml-32 -mb-32 transition-all duration-1000 group-hover:bg-orange-vibrant/20" />
           
-          <div className="relative flex h-24 w-24 items-center justify-center rounded-2xl shadow-2xl overflow-hidden mb-2 bg-white/95 ring-4 ring-white/10 backdrop-blur-sm transform transition-transform duration-500 group-hover:-translate-y-2">
-            <img src="/ibad-logo.png" alt="Logo" className="w-[85%] h-[85%] object-contain" />
-          </div>
-
-          <div className="relative z-10 w-full flex flex-col items-center">
-            {assessment.institution && (
-              <div className="mb-4">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 text-white/90 text-xs font-bold uppercase tracking-widest border border-white/20 backdrop-blur-md shadow-inner">
-                  <ShieldCheck className="h-3.5 w-3.5" />
-                  {assessment.institution}
-                </span>
-              </div>
-            )}
-            <h1 className="text-3xl font-bold tracking-tight text-balance leading-tight drop-shadow-md font-serif">{assessment.title}</h1>
-            <p className="mt-3 text-white/80 text-sm font-medium bg-black/20 px-4 py-1.5 rounded-full backdrop-blur-sm">
-              <span className="font-semibold">{disc?.name ?? "Disciplina Geral"}</span>
-              <span className="mx-2 opacity-40">|</span> 
-              Prof. {disc?.professorName || assessment.professor}
+          <div className="relative z-10">
+            <div className="h-20 w-20 bg-emerald-neon text-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-emerald-neon/20 transform transition-transform group-hover:scale-110 group-hover:rotate-3">
+               <Sparkles className="h-10 w-10" />
+            </div>
+            
+            <div className="mb-4">
+              <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/5 text-emerald-neon text-[10px] font-black uppercase tracking-[0.2em] border border-white/10 backdrop-blur-md">
+                <ShieldCheck className="h-3.5 w-3.5" />
+                {assessment.institution || "AVALIA — Gestão de Provas"}
+              </span>
+            </div>
+            <h1 className="text-4xl font-black tracking-tighter text-white leading-none mb-4">{assessment.title}</h1>
+            <p className="text-slate-400 text-lg font-medium">
+              <span className="text-white">{disc?.name ?? "Módulo Geral"}</span>
+              <span className="mx-3 opacity-20">/</span> 
+              {disc?.professorName || assessment.professor}
             </p>
           </div>
-
-          <div className="flex flex-wrap justify-center gap-3 text-sm font-semibold text-white/90 border-t border-white/10 pt-6 w-full mt-2">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/5 shadow-sm">
-              <BookOpenCheck className="h-4 w-4 text-accent-gold" />
-              <span>{assessment.questionIds.length} {assessment.questionIds.length === 1 ? "Questão" : "Questões"}</span>
+ 
+          <div className="flex flex-wrap justify-center gap-4 border-t border-white/5 pt-8 w-full mt-2 relative z-10">
+            <div className="flex items-center gap-3 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/5">
+              <BookOpenCheck className="h-5 w-5 text-emerald-neon" />
+              <span className="text-sm font-bold text-slate-200">{assessment.questionIds.length} Questões</span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 backdrop-blur-sm border border-white/5 shadow-sm">
-              <Sparkles className="h-4 w-4 text-accent-gold" />
-              <span>{assessment.totalPoints.toFixed(1)} Pontos</span>
+            <div className="flex items-center gap-3 px-5 py-2.5 rounded-2xl bg-white/5 border border-white/5">
+              <Sparkles className="h-5 w-5 text-orange-vibrant" />
+              <span className="text-sm font-bold text-slate-200">{assessment.totalPoints.toFixed(1)} Pontos</span>
             </div>
           </div>
         </div>
@@ -226,10 +224,10 @@ export function StudentLogin({ onLogin, onResult, onBack, preloadedAssessmentId 
           </div>
         ) : (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="mb-8">
-              <h2 className="text-2xl font-bold mb-2 text-slate-900">Acesse sua Prova</h2>
-              <p className="text-sm text-slate-500 leading-relaxed">
-                Digite suas credenciais abaixo para iniciar. O sistema registrará seu progresso automaticamente.
+            <div className="mb-10">
+              <h2 className="text-3xl font-black mb-2 text-slate-900 tracking-tight">Acesso ao Exame</h2>
+              <p className="text-sm text-slate-500 leading-relaxed font-medium">
+                Identifique-se para iniciar a avaliação. Seus dados são protegidos e o progresso é salvo em tempo real.
               </p>
             </div>
             
@@ -285,9 +283,9 @@ export function StudentLogin({ onLogin, onResult, onBack, preloadedAssessmentId 
                 <Button 
                   type="submit" 
                   disabled={loading || !assessment || !isTakeable} 
-                  className="bg-primary hover:bg-primary/90 text-white font-bold h-14 text-base flex-1 rounded-xl shadow-md hover:shadow-lg transition-all"
+                  className="vibrant-button-emerald font-black h-16 text-lg flex-1 rounded-2xl"
                 >
-                  {isTakeable ? "Iniciar Prova Agora" : "Avaliação Indisponível"} <ArrowRight className="ml-2 h-5 w-5" />
+                  {isTakeable ? "INICIAR AVALIAÇÃO" : "EXAME INDISPONÍVEL"} <ArrowRight className="ml-2 h-6 w-6" />
                 </Button>
               </div>
 

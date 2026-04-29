@@ -5,7 +5,7 @@ import { AlertCircle, Clock, CheckCircle2, Library, FileText, BookOpenCheck, Mes
 import type { StudentProfile } from "@/lib/store"
 import { cn } from "@/lib/utils"
 
-type Tab = "overview" | "class-info" | "curriculum" | "materials" | "grades" | "exams" | "chat" | "perfil"
+type Tab = "overview" | "materials" | "grades" | "exams" | "chat" | "perfil"
 
 interface OverviewTabProps {
   profile: StudentProfile
@@ -18,20 +18,21 @@ export function OverviewTab({ profile, onTabChange }: OverviewTabProps) {
 
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="md:col-span-2 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl border border-white/10" style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)' }}>
-          <div className="absolute top-0 right-0 w-64 h-64 rounded-full -mr-32 -mt-32 blur-3xl opacity-30" style={{ backgroundColor: '#b45309' }} />
+        <div className="md:col-span-2 rounded-[2rem] p-10 text-white relative overflow-hidden shadow-2xl border border-white/5 bg-[#020617]">
+          <div className="absolute top-0 right-0 w-80 h-80 rounded-full -mr-40 -mt-40 blur-[100px] opacity-40 bg-emerald-neon/30" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full -ml-32 -mb-32 blur-[80px] opacity-20 bg-orange-vibrant/20" />
           <div className="relative z-10 flex flex-col h-full justify-between gap-6">
             <div>
-              <h3 className="text-3xl font-bold font-serif mb-2 leading-tight drop-shadow-md">Que a graça do nosso <br /> Senhor Jesus esteja contigo!</h3>
-              <p className="text-slate-200 text-base max-w-md mt-4 leading-relaxed font-medium">
-                Bem-vindo de volta, {profile.name.split(' ')[0]}. Sua jornada teológica está em andamento.
+              <h3 className="text-4xl font-black mb-4 leading-tight tracking-tighter">Prepare-se para <br /> sua Próxima Prova!</h3>
+              <p className="text-slate-300 text-lg max-w-md leading-relaxed font-medium">
+                Olá, {profile.name.split(' ')[0]}. Sua jornada acadêmica foca agora na excelência das avaliações.
               </p>
             </div>
             <div className="flex gap-4">
-              <Button className="text-white font-bold rounded-2xl h-12 px-8 shadow-lg transition-all hover:scale-105" style={{ backgroundColor: '#b45309' }} onClick={() => onTabChange("curriculum")}>
-                Ver Grade
+              <Button className="vibrant-button-emerald h-14 px-10 text-lg" onClick={() => onTabChange("exams")}>
+                Acessar Provas
               </Button>
-              <Button variant="ghost" className="text-white hover:bg-white/10 font-bold rounded-2xl h-12 px-8" onClick={() => onTabChange("materials")}>
+              <Button variant="ghost" className="text-white hover:bg-white/5 font-bold rounded-2xl h-14 px-8 border border-white/10" onClick={() => onTabChange("materials")}>
                 Materiais
               </Button>
             </div>
@@ -55,17 +56,18 @@ export function OverviewTab({ profile, onTabChange }: OverviewTabProps) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { id: "materials", label: "Materiais", sub: "Apostilas e PDFs", icon: Library, color: "text-blue-600", bg: "bg-blue-50" },
-          { id: "grades", label: "Boletim", sub: "Notas e Frequência", icon: FileText, color: "text-amber-600", bg: "bg-amber-50" },
-          { id: "exams", label: "Avaliações", sub: "Provas disponíveis", icon: BookOpenCheck, color: "text-green-600", bg: "bg-green-50" },
-          { id: "chat", label: "Suporte", sub: "Dúvidas e Chat", icon: MessageSquare, color: "text-purple-600", bg: "bg-purple-50" },
+          { id: "exams", label: "Minhas Provas", sub: "Avaliações Disponíveis", icon: BookOpenCheck, color: "text-emerald-neon", bg: "bg-emerald-neon/10" },
+          { id: "grades", label: "Desempenho", sub: "Notas e Boletim", icon: FileText, color: "text-orange-vibrant", bg: "bg-orange-vibrant/10" },
+          { id: "materials", label: "Biblioteca", sub: "Materiais de Estudo", icon: Library, color: "text-blue-400", bg: "bg-blue-400/10" },
+          { id: "chat", label: "Suporte", sub: "Dúvidas e Chat", icon: MessageSquare, color: "text-white", bg: "bg-white/10" },
         ].map((card) => (
-          <button key={card.id} onClick={() => onTabChange(card.id as Tab)} className="bg-white border border-border/50 rounded-2xl p-6 shadow-sm hover:shadow-xl hover:border-primary/20 transition-all text-left flex flex-col group">
-            <div className={cn("p-2 rounded-xl mb-4 w-10 h-10 flex items-center justify-center transition-transform group-hover:scale-110", card.bg, card.color)}>
-              <card.icon className="h-5 w-5" />
+          <button key={card.id} onClick={() => onTabChange(card.id as Tab)} className="bg-[#020617] border border-white/5 rounded-[2rem] p-8 shadow-xl hover:border-emerald-neon/40 transition-all text-left flex flex-col group relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-white/5 to-transparent rounded-bl-[3rem]" />
+            <div className={cn("p-3 rounded-2xl mb-6 w-12 h-12 flex items-center justify-center transition-all group-hover:scale-110 group-hover:rotate-3 shadow-lg", card.bg, card.color)}>
+              <card.icon className="h-6 w-6" />
             </div>
-            <h4 className="font-bold text-foreground">{card.label}</h4>
-            <p className="text-[11px] text-muted-foreground mt-1 uppercase font-semibold tracking-tighter">{card.sub}</p>
+            <h4 className="font-black text-xl text-white tracking-tight">{card.label}</h4>
+            <p className="text-[10px] text-emerald-neon/60 mt-2 uppercase font-black tracking-widest">{card.sub}</p>
           </button>
         ))}
       </div>

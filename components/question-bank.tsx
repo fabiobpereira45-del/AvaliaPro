@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import {
-  Plus, Pencil, Trash2, ChevronRight, BookOpen, CheckSquare, AlignLeft, X, Check, Sparkles, Upload, ListChecks
+  Plus, Pencil, Trash2, ChevronRight, BookOpen, CheckSquare, AlignLeft, X, Check, Sparkles, Upload, ListChecks, FileText, Download
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -26,6 +26,7 @@ import {
   deleteQuestions, deleteQuestionsByDiscipline
 } from "@/lib/store"
 import { Checkbox } from "@/components/ui/checkbox"
+import { printQuestionBankPDF } from "@/lib/pdf"
 
 import { AIQuestionGenerator } from "./ai-question-generator"
 import { cn } from "@/lib/utils"
@@ -509,6 +510,9 @@ function BulkImportModal({
         const t = typeMatch[1].toLowerCase();
         if (t.includes("verdadeiro") || t.includes("falso")) currentQ.type = "true-false";
         else if (t.includes("discursiva")) currentQ.type = "discursive";
+        else if (t.includes("lacuna") || t.includes("completar")) currentQ.type = "fill-in-the-blank";
+        else if (t.includes("relacionar") || t.includes("matching")) currentQ.type = "matching";
+        else if (t.includes("incorreta")) currentQ.type = "incorrect-alternative";
         else currentQ.type = "multiple-choice";
         continue;
       }
@@ -562,6 +566,35 @@ function BulkImportModal({
           finalCorrect = "false";
         }
         return { ...q, correctAnswer: finalCorrect, choices: [] };
+      }
+
+      if (q.type === "matching") {
+        const pairs: any[] = [];
+        // Tenta extrair pares das opções: "Opção A: Termo -> Definição" ou do Gabarito: "A-1, B-2"
+        q.choices.forEach((c: any) => {
+          const parts = c.text.split(/[->|:]/);
+          if (parts.length >= 2) {
+            pairs.push({ id: uid(), left: parts[0].trim(), right: parts[1].trim() });
+          }
+        });
+        
+        // Se não achou nas opções, tenta no texto (se o gabarito tiver os pares)
+        if (pairs.length === 0 && q.correctAnswer.includes(',')) {
+          const pParts = q.correctAnswer.split(',');
+          pParts.forEach((p: string) => {
+            const inner = p.split(/[-=]/);
+            if (inner.length >= 2) {
+              pairs.push({ id: uid(), left: inner[0].trim(), right: inner[1].trim() });
+            }
+          });
+        }
+        
+        return { ...q, pairs, choices: [], correctAnswer: "" };
+      }
+
+      if (q.type === "fill-in-the-blank") {
+        // Garante que o texto tenha [[lacuna]]
+        return { ...q, choices: [], pairs: [] };
       }
 
       return q;
@@ -676,6 +709,7 @@ export function QuestionBank({ isMaster }: { isMaster?: boolean }) {
   const [selectedDiscipline, setSelectedDiscipline] = useState<Discipline | null>(null)
   const [questions, setQuestions] = useState<Question[]>([])
   const [questionCounts, setQuestionCounts] = useState<Record<string, number>>({})
+  const [categoryFilter, setCategoryFilter] = useState<string>("all")
 
   // Modals
   const [discModal, setDiscModal] = useState(false)
@@ -904,6 +938,27 @@ export function QuestionBank({ isMaster }: { isMaster?: boolean }) {
                 </div>
               ) : (
                 <div className="flex items-center gap-2 mr-2">
+                  <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                    <SelectTrigger className="h-8 w-40 text-[11px] font-bold">
+                      <SelectValue placeholder="Filtrar Categoria" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Todas as Categorias</SelectItem>
+                      {Object.entries(TYPE_LABELS).map(([val, label]) => (
+                        <SelectItem key={val} value={val}>{label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-8 text-[11px] font-bold border-primary/20 text-primary hover:bg-primary/5"
+                    onClick={() => printQuestionBankPDF(questions, selectedDiscipline?.name || "Banco", categoryFilter)}
+                  >
+                    <FileText className="h-3.5 w-3.5 mr-1.5" /> PDF
+                  </Button>
+
                   {questions.length > 0 && (
                     <Button
                       size="sm"
@@ -960,7 +1015,9 @@ export function QuestionBank({ isMaster }: { isMaster?: boolean }) {
               </Button>
             </div>
           ) : (
-            questions.map((q, i) => (
+            questions
+              .filter(q => categoryFilter === 'all' || q.type === categoryFilter)
+              .map((q, i) => (
               <div
                 key={q.id}
                 className={cn(

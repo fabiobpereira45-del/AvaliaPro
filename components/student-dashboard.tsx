@@ -163,13 +163,10 @@ export function StudentDashboard({ session, onBack, onLogout }: Props) {
     }
 
     const navItems: { id: Tab; label: string; icon: any }[] = [
-        { id: "overview", label: "Visão Geral", icon: Home },
-        { id: "class-info", label: "Meu Núcleo", icon: Users },
-        { id: "curriculum", label: "Grade Curricular do Sistema", icon: CalendarDays },
-        { id: "materials", label: "Materiais EAD", icon: Library },
-        { id: "exams", label: "Avaliações", icon: BookOpenCheck },
-        { id: "grades", label: "Boletim e Notas", icon: FileText },
-        { id: "financeiro", label: "Financeiro", icon: DollarSign },
+        { id: "overview", label: "Painel Inicial", icon: Home },
+        { id: "exams", label: "Minhas Provas", icon: BookOpenCheck },
+        { id: "grades", label: "Notas e Desempenho", icon: FileText },
+        { id: "materials", label: "Material de Estudo", icon: Library },
         { id: "chat", label: "Mensagens", icon: MessageSquare },
         { id: "perfil", label: "Meu Perfil", icon: User },
     ]
@@ -177,8 +174,8 @@ export function StudentDashboard({ session, onBack, onLogout }: Props) {
     const filteredMaterials = materials
 
     const renderSidebar = () => (
-        <div className="flex flex-col h-[100dvh] text-slate-100 pt-[env(safe-area-inset-top,0px)]" style={{ backgroundColor: '#0f172a' }}>
-            <div className="p-6 border-b border-white/20 mb-4 bg-black/40 backdrop-blur-md">
+        <div className="flex flex-col h-[100dvh] text-slate-100 pt-[env(safe-area-inset-top,0px)] bg-[#020617]">
+            <div className="p-6 border-b border-white/5 mb-4 bg-gradient-to-b from-emerald-neon/20 to-transparent backdrop-blur-md">
                 <div className="relative mb-4 group inline-block">
                     <AvatarUpload 
                         currentUrl={profile.avatar_url} 
@@ -189,7 +186,7 @@ export function StudentDashboard({ session, onBack, onLogout }: Props) {
                     />
                 </div>
                 <h2 className="text-base font-bold tracking-tight text-white">{profile.name}</h2>
-                <p className="text-[10px] text-slate-300 uppercase tracking-[2px] font-bold">Portal do Aluno</p>
+                <p className="text-[10px] text-emerald-neon uppercase tracking-[3px] font-black">Portal do Aluno • AVALIA</p>
             </div>
 
             <ScrollArea className="flex-1 px-3">
@@ -202,12 +199,11 @@ export function StudentDashboard({ session, onBack, onLogout }: Props) {
                                 setIsMobileMenuOpen(false)
                             }}
                             className={cn(
-                                "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 group",
+                                "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group",
                                 tab === item.id
-                                    ? "text-white shadow-md shadow-[#7c3aed]/20"
-                                    : "text-slate-400 hover:text-white hover:bg-white/10"
+                                    ? "accent-gradient text-white shadow-xl shadow-emerald-neon/20 scale-[1.02]"
+                                    : "text-slate-400 hover:text-emerald-neon hover:bg-white/5"
                             )}
-                            style={tab === item.id ? { backgroundColor: '#7c3aed' } : {}}
                         >
                             <item.icon className={cn("h-5 w-5 transition-colors", tab === item.id ? "text-white" : "text-slate-500 group-hover:text-slate-200")} />
                             {item.label}
@@ -217,9 +213,9 @@ export function StudentDashboard({ session, onBack, onLogout }: Props) {
                 </div>
 
                 <div className="mt-4 px-3">
-                    <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
-                        <p className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#7c3aed' }}>Suporte Direto</p>
-                        <p className="text-xs text-slate-400 mb-4 leading-relaxed">Dúvidas sobre o curso ou notas? Fale conosco.</p>
+                    <div className="p-5 rounded-2xl bg-gradient-to-br from-white/5 to-transparent border border-white/5">
+                        <p className="text-[10px] font-black uppercase tracking-widest mb-2 text-emerald-neon">Suporte Pedagógico</p>
+                        <p className="text-xs text-slate-400 mb-4 leading-relaxed font-medium">Dúvidas sobre avaliações? Nossa equipe está pronta para ajudar.</p>
                         <Button variant="outline" size="sm" className="w-full bg-white/10 text-xs text-white border-white/20 hover:bg-white/20 h-8 gap-2" asChild>
                             <a href={`https://wa.me/5571987483103`} target="_blank" rel="noopener noreferrer">
                                 <MessageSquare className="h-3 w-3" /> WhatsApp

@@ -191,43 +191,32 @@ export function AdminDashboard({ onLogout }: Props) {
 
   const menuGroups = [
     {
-      title: "Principal",
+      title: "Monitoramento",
       items: [
-        { id: "overview", label: "Visão Geral", icon: <BarChart3 className="h-4 w-4" /> },
-        { id: "chat", label: "Chat Alunos", icon: <MessageSquare className="h-4 w-4" /> },
+        { id: "overview", label: "Painel de Controle", icon: <BarChart3 className="h-4 w-4" /> },
+        { id: "chat", label: "Comunicação (Alunos)", icon: <MessageSquare className="h-4 w-4" /> },
+      ]
+    },
+    {
+      title: "Gestão de Avaliações",
+      items: [
+        { id: "questions", label: "Banco de Questões", icon: <BookOpen className="h-4 w-4" /> },
+        { id: "assessments", label: "Provas e Exames", icon: <FileText className="h-4 w-4" /> },
+        { id: "submissions", label: "Respostas e Correções", icon: <CheckCircle2 className="h-4 w-4" /> },
+      ]
+    },
+    {
+      title: "Resultados",
+      items: [
+        { id: "grades", label: "Desempenho Global", icon: <GraduationCap className="h-4 w-4" /> },
+        { id: "materials", label: "Materiais Complementares", icon: <Library className="h-4 w-4" /> },
       ]
     },
     {
       title: "Administração",
       items: [
-        { id: "financeiro", label: "Financeiro", icon: <DollarSign className="h-4 w-4" />, masterOnly: true },
-        { id: "professors", label: "Professores", icon: <ShieldCheck className="h-4 w-4" />, masterOnly: true },
+        { id: "professors", label: "Corpo Docente", icon: <ShieldCheck className="h-4 w-4" />, masterOnly: true },
         { id: "settings", label: "Configurações", icon: <Settings className="h-4 w-4" /> },
-      ]
-    },
-    {
-      title: "Acadêmico",
-      items: [
-        { id: "students", label: "Alunos", icon: <Users className="h-4 w-4" /> },
-        { id: "grades", label: "Notas e Diários", icon: <GraduationCap className="h-4 w-4" /> },
-        { id: "attendance", label: "Frequência", icon: <CalendarCheck className="h-4 w-4" /> },
-        { id: "classes", label: "Núcleo", icon: <Briefcase className="h-4 w-4" />, masterOnly: true },
-      ]
-    },
-    {
-      title: "Avaliações",
-      items: [
-        { id: "questions", label: "Banco de Questões", icon: <BookOpen className="h-4 w-4" /> },
-        { id: "assessments", label: "Provas", icon: <FileText className="h-4 w-4" /> },
-        { id: "submissions", label: "Respostas de Provas", icon: <CheckCircle2 className="h-4 w-4" /> },
-      ]
-    },
-    {
-      title: "Recursos",
-      items: [
-        { id: "materials", label: "Biblioteca (PDFs)", icon: <BookOpen className="h-4 w-4" /> },
-        { id: "semesters", label: "Grade Curricular do Sistema", icon: <GraduationCap className="h-4 w-4" /> },
-        { id: "class_schedules", label: "Quadro de Horários", icon: <CalendarDays className="h-4 w-4" />, masterOnly: true },
       ]
     }
   ]
@@ -242,26 +231,26 @@ export function AdminDashboard({ onLogout }: Props) {
       className={cn(
         "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all group w-full",
         tab === item.id
-          ? "accent-gradient text-white shadow-lg shadow-orange/20"
-          : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+          ? "accent-gradient text-white shadow-lg shadow-emerald-neon/20"
+          : "text-slate-400 hover:text-emerald-neon hover:bg-white/5"
       )}
     >
       <div className={cn(
         "p-1.5 rounded-lg transition-colors",
-        tab === item.id ? "bg-white/20" : "bg-muted group-hover:bg-background"
+        tab === item.id ? "bg-white/20" : "bg-white/5 group-hover:bg-emerald-neon/10"
       )}>
         {item.icon}
       </div>
-      <span className="flex-1 text-left">{item.label}</span>
-      {tab === item.id && <ChevronRight className="h-4 w-4" />}
+      <span className="flex-1 text-left font-semibold">{item.label}</span>
+      {tab === item.id && <div className="w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)]" />}
     </button>
   )
 
   const renderSidebar = () => (
-    <div className="flex flex-col h-full bg-card border-r border-border/50 overflow-hidden">
-      <div className="flex flex-col h-full text-slate-100 bg-navy">
+    <div className="flex flex-col h-full bg-[#020617] border-r border-white/5 overflow-hidden">
+      <div className="flex flex-col h-full text-slate-100">
         {/* Perfil Header na Sidebar */}
-        <div className="p-6 border-b border-white/10 mb-2 bg-black/20 overflow-hidden relative">
+        <div className="p-6 border-b border-white/5 mb-2 bg-gradient-to-b from-emerald-neon/10 to-transparent overflow-hidden relative">
           <div className="flex items-center gap-4">
             <div className="shrink-0 relative group">
               <AvatarUpload 
@@ -277,7 +266,7 @@ export function AdminDashboard({ onLogout }: Props) {
             </div>
             <div className="min-w-0 flex-1 overflow-hidden">
               <h2 className="text-sm font-bold tracking-tight text-white leading-tight truncate">{username || "Professor"}</h2>
-              <p className="text-[9px] text-slate-400 uppercase tracking-widest font-bold truncate">IBAD • {isMaster ? "Painel Master" : "Painel Docente"}</p>
+              <p className="text-[9px] text-emerald-neon uppercase tracking-widest font-black truncate">AVALIA • {isMaster ? "Painel Master" : "Painel Docente"}</p>
             </div>
           </div>
         </div>
@@ -289,7 +278,7 @@ export function AdminDashboard({ onLogout }: Props) {
               if (visibleItems.length === 0) return null
               return (
                 <div key={group.title} className="space-y-1">
-                  <h3 className="px-3 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 mb-2">
+                  <h3 className="px-3 text-[10px] font-black uppercase tracking-[0.2em] text-emerald-neon/40 mb-3">
                     {group.title}
                   </h3>
                   <div className="grid gap-1">

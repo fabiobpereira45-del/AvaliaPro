@@ -1,6 +1,6 @@
 async function test() {
-    const url = "https://vevivqcluyutlatwsnjh.supabase.co/rest/v1/classes?select=*";
-    const key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZldml2cWNsdXl1dGxhdHdzbmpoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NTU2MTgsImV4cCI6MjA5MTIzMTYxOH0.te2bkSjxjU5ZQ5tzGPAInKaHjc--KX4lOL_M1vgYlNg";
+    const url = "https://kekuwxhqrzvrgbjiqyue.supabase.co/rest/v1/classes?select=*";
+    const key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtla3V3eGhxcnp2cmdiamlxeXVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc0MTkyMTAsImV4cCI6MjA5Mjk5NTIxMH0.U183t2yRk83igrSqpaNFZdMoXsw_X7yidWIzKm7nfBg";
     try {
         const res = await fetch(url, {
             headers: {

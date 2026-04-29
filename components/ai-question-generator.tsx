@@ -76,12 +76,12 @@ INSTRUÇÕES DE FORMATO:
 Para que eu possa importar no sistema Gestão Global, você DEVE retornar as questões seguindo RIGOROSAMENTE este formato estruturado:
 
 Questão [Número]: [Texto da Questão]
-Tipo: [Múltipla Escolha / Verdadeiro ou Falso / Discursiva]
+Tipo: [Múltipla Escolha / Verdadeiro ou Falso / Discursiva / Completar Lacunas / Relacionar Colunas / Escolha a Incorreta]
 Opção A: [Texto]
 Opção B: [Texto]
 Opção C: [Texto]
 Opção D: [Texto]
-Gabarito: [A, B, C ou D / Verdadeiro ou Falso]
+Gabarito: [A, B, C ou D / Verdadeiro ou Falso / Texto da lacuna / Pares separados por vírgula]
 Fundamentação: [Breve explicação teográfica da resposta]
 
 ---
