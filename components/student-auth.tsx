@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Lock, User, Key, ArrowRight, AlertCircle, GraduationCap, CheckCircle2, Eye, EyeOff, MessageSquare } from "lucide-react"
+import { Lock, User, Key, ArrowRight, AlertCircle, GraduationCap, CheckCircle2, Eye, EyeOff, MessageSquare, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -74,7 +74,7 @@ export function StudentAuth({ onSuccess }: Props) {
                 </div>
                 <div>
                     <h1 className="text-2xl font-serif font-bold text-foreground">
-                        {mode === "login" ? "Acesso do Aluno" : mode === "register" ? "Matrícula IBAD" : "Recuperar Acesso"}
+                        {mode === "login" ? "Acesso do Aluno" : mode === "register" ? "Cadastro AVALIA" : "Recuperar Acesso"}
                     </h1>
                     <p className="mt-1 text-sm text-muted-foreground text-balance">
                         {mode === "login"
@@ -196,11 +196,6 @@ export function StudentAuth({ onSuccess }: Props) {
                                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                             </button>
                         </div>
-                        {mode === "login" && (
-                            <p className="text-xs text-muted-foreground mt-4 text-center leading-relaxed">
-                                💡 <b>Dica:</b> Sua senha inicial é seu <b>CPF (apenas números)</b> ou <b>IBAD2026</b>.
-                            </p>
-                        )}
                     </div>
 
                     {error && (
@@ -222,31 +217,10 @@ export function StudentAuth({ onSuccess }: Props) {
                         disabled={loading}
                         className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold h-11 text-base w-full mt-2"
                     >
-                        {loading ? "Aguarde..." : mode === "login" ? "Entrar no Portal" : "Concluir Matrícula"}
+                        {loading ? "Aguarde..." : "Entrar no Portal"}
                         {!loading && <ArrowRight className="ml-2 h-4 w-4" />}
                     </Button>
                 </form>
-            )}
-
-            {mode !== "forgot" && (
-                <div className="mt-6 text-center text-sm">
-                    <span className="text-muted-foreground">
-                        {mode === "login" ? "Ainda não tem matrícula?" : "Já possui matrícula?"}
-                    </span>{" "}
-                    <button
-                        type="button"
-                        onClick={() => {
-                            setMode(mode === "login" ? "register" : "login")
-                            setError(null)
-                            setSuccessMsg(null)
-                            setPassword("")
-                            setShowPassword(false)
-                        }}
-                        className="font-semibold text-primary hover:underline"
-                    >
-                        {mode === "login" ? "Realizar Matrícula" : "Fazer Login"}
-                    </button>
-                </div>
             )}
         </div>
     )
