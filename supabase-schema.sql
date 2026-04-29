@@ -248,6 +248,32 @@ INSERT INTO public.financial_settings (enrollment_fee, monthly_fee, second_call_
 VALUES (120, 60, 30, 50, 12)
 ON CONFLICT DO NOTHING;
 
+-- ── 20. Desafios Semanais (challenges) ────────────────────────
+CREATE TABLE IF NOT EXISTS public.challenges (
+  id             TEXT PRIMARY KEY,
+  discipline_id  TEXT REFERENCES public.disciplines(id) ON DELETE CASCADE,
+  week           INTEGER NOT NULL,
+  type           TEXT NOT NULL CHECK (type IN ('enigma', 'quiz', 'decifrar', 'reflexao')),
+  title          TEXT NOT NULL,
+  description    TEXT NOT NULL,
+  content        TEXT NOT NULL,
+  correct_answer TEXT,
+  points_xp      INTEGER NOT NULL DEFAULT 10,
+  is_active      BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at     TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- ── 21. Submissões de Desafios (challenge_submissions) ────────
+CREATE TABLE IF NOT EXISTS public.challenge_submissions (
+  id             TEXT PRIMARY KEY,
+  challenge_id   TEXT NOT NULL REFERENCES public.challenges(id) ON DELETE CASCADE,
+  student_email  TEXT NOT NULL,
+  is_completed   BOOLEAN NOT NULL DEFAULT FALSE,
+  earned_xp      INTEGER NOT NULL DEFAULT 0,
+  completed_at   TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  UNIQUE(challenge_id, student_email)
+);
+
 -- ============================================================
 -- POLÍTICAS DE SEGURANÇA (Row Level Security)
 -- ============================================================
@@ -270,6 +296,8 @@ ALTER TABLE public.attendance ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.chat_messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.class_schedules ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.board_members ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.challenges ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.challenge_submissions ENABLE ROW LEVEL SECURITY;
 
 -- Políticas: leitura pública para dados não-sensíveis
 CREATE POLICY "public_read_classes"       ON public.classes           FOR SELECT USING (true);
@@ -284,6 +312,8 @@ CREATE POLICY "public_read_schedules"     ON public.class_schedules    FOR SELEC
 CREATE POLICY "public_read_fin_settings"  ON public.financial_settings FOR SELECT USING (true);
 CREATE POLICY "public_read_grades"        ON public.student_grades     FOR SELECT USING (true);
 CREATE POLICY "public_read_professors"    ON public.professor_accounts FOR SELECT USING (true);
+CREATE POLICY "public_read_challenges"    ON public.challenges          FOR SELECT USING (true);
+CREATE POLICY "public_read_chal_sub"      ON public.challenge_submissions FOR SELECT USING (true);
 
 -- Políticas: escrita total para anon (necessário pois usamos anon key no cliente)
 CREATE POLICY "anon_all_classes"         ON public.classes              FOR ALL USING (true) WITH CHECK (true);
@@ -303,3 +333,5 @@ CREATE POLICY "anon_all_attendance"      ON public.attendance           FOR ALL 
 CREATE POLICY "anon_all_chat"            ON public.chat_messages        FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "anon_all_schedules"       ON public.class_schedules      FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "anon_all_board"           ON public.board_members        FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "anon_all_challenges"      ON public.challenges           FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "anon_all_chal_sub"        ON public.challenge_submissions FOR ALL USING (true) WITH CHECK (true);

@@ -38,6 +38,31 @@ export interface ClassSchedule {
     dayOfWeek: string; 
     timeStart: string; 
     timeEnd: string; 
+    createdAt: string;
+}
+export type ChallengeType = 'enigma' | 'quiz' | 'decifrar' | 'reflexao'
+export interface Challenge {
+  id: string
+  disciplineId: string
+  week: number
+  type: ChallengeType
+  title: string
+  description: string
+  content: string
+  correctAnswer?: string
+  pointsXP: number
+  isActive: boolean
+  createdAt: string
+}
+
+export interface ChallengeSubmission {
+  id: string
+  challengeId: string
+  studentEmail: string
+  isCompleted: boolean
+  earnedXP: number
+  completedAt: string
+}
     lessonsCount: number; 
     workload: number; 
     startDate?: string; 
@@ -1916,6 +1941,95 @@ export async function processProfessorPayment(data: { professorId: string; disci
   // (Poderíamos ter uma tabela disciplne_payments, mas por enquanto a transaction com metadata basta)
   
   return transaction
+}
+
+// ——— Challenges —————————————————————————————————————————————————————————————
+
+export async function getChallenges(): Promise<Challenge[]> {
+  const supabase = createClient()
+  const { data } = await supabase.from('challenges').select('*').order('created_at', { ascending: false })
+  return (data || []).map(mapChallenge)
+}
+
+export async function addChallenge(challenge: Omit<Challenge, 'id' | 'createdAt'>): Promise<Challenge> {
+  const supabase = createClient()
+  const { data, error } = await supabase.from('challenges').insert({
+    discipline_id: challenge.disciplineId,
+    week: challenge.week,
+    type: challenge.type,
+    title: challenge.title,
+    description: challenge.description,
+    content: challenge.content,
+    correct_answer: challenge.correctAnswer,
+    points_xp: challenge.pointsXP,
+    is_active: challenge.isActive
+  }).select().single()
+  if (error) throw error
+  return mapChallenge(data)
+}
+
+export async function updateChallenge(id: string, challenge: Partial<Challenge>): Promise<void> {
+  const supabase = createClient()
+  await supabase.from('challenges').update({
+    discipline_id: challenge.disciplineId,
+    week: challenge.week,
+    type: challenge.type,
+    title: challenge.title,
+    description: challenge.description,
+    content: challenge.content,
+    correct_answer: challenge.correctAnswer,
+    points_xp: challenge.pointsXP,
+    is_active: challenge.isActive
+  }).eq('id', id)
+}
+
+export async function deleteChallenge(id: string): Promise<void> {
+  const supabase = createClient()
+  await supabase.from('challenges').delete().eq('id', id)
+}
+
+export async function getChallengeSubmissions(challengeId: string): Promise<ChallengeSubmission[]> {
+  const supabase = createClient()
+  const { data } = await supabase.from('challenge_submissions').select('*').eq('challenge_id', challengeId)
+  return (data || []).map(mapChallengeSubmission)
+}
+
+export async function saveChallengeSubmission(submission: Omit<ChallengeSubmission, 'id' | 'completedAt'>): Promise<void> {
+  const supabase = createClient()
+  await supabase.from('challenge_submissions').upsert({
+    challenge_id: submission.challengeId,
+    student_email: submission.studentEmail,
+    is_completed: submission.isCompleted,
+    earned_xp: submission.earnedXP,
+    completed_at: new Date().toISOString()
+  })
+}
+
+function mapChallenge(row: any): Challenge {
+  return {
+    id: row.id,
+    disciplineId: row.discipline_id,
+    week: row.week,
+    type: row.type,
+    title: row.title,
+    description: row.description,
+    content: row.content,
+    correctAnswer: row.correct_answer,
+    pointsXP: row.points_xp,
+    isActive: row.is_active,
+    createdAt: row.created_at,
+  }
+}
+
+function mapChallengeSubmission(row: any): ChallengeSubmission {
+  return {
+    id: row.id,
+    challengeId: row.challenge_id,
+    studentEmail: row.student_email,
+    isCompleted: row.is_completed,
+    earnedXP: row.earned_xp,
+    completedAt: row.completed_at,
+  }
 }
 
 // ——— System Updates —————————————————————————————————————————————————————————————

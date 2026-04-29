@@ -17,6 +17,7 @@ import { StudentAuth } from "@/components/student-auth"
 import { StudentChatView } from "@/components/student-chat-view"
 import { StudentGradesView } from "@/components/student-grades-view"
 import { StudentAssessmentView } from "@/components/student-assessment-view"
+import { StudentChallengeView } from "@/components/student-challenge-view"
 import { AvatarUpload } from "@/components/avatar-upload"
 import { createClient } from "@/lib/supabase/client"
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet"
@@ -42,12 +43,12 @@ interface Props {
     onLogout: () => void
 }
 
-type Tab = "overview" | "class-info" | "curriculum" | "materials" | "grades" | "exams" | "chat" | "perfil" | "financeiro"
+type Tab = "overview" | "challenges" | "class-info" | "curriculum" | "materials" | "grades" | "exams" | "chat" | "perfil" | "financeiro"
 
 export function StudentDashboard({ session, onBack, onLogout }: Props) {
     const [profile, setProfile] = useState<StudentProfile | null>(null)
     const [loading, setLoading] = useState(true)
-    const [tab, setTab] = useState<Tab>("overview")
+    const [tab, setTab] = useState<Tab>("challenges")
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const supabase = createClient()
 
@@ -163,7 +164,7 @@ export function StudentDashboard({ session, onBack, onLogout }: Props) {
     }
 
     const navItems: { id: Tab; label: string; icon: any }[] = [
-        { id: "overview", label: "Desafios Semanais", icon: Trophy },
+        { id: "challenges", label: "Desafios Semanais", icon: Trophy },
         { id: "exams", label: "Minhas Provas", icon: BookOpenCheck },
         { id: "grades", label: "Notas e Desempenho", icon: FileText },
         { id: "materials", label: "Material de Estudo", icon: Library },
@@ -322,6 +323,7 @@ export function StudentDashboard({ session, onBack, onLogout }: Props) {
                     ) : (
                         <div className="w-full max-w-[1600px] mx-auto">
                             {tab === "overview" && <OverviewTab profile={profile} onTabChange={setTab} />}
+                            {tab === "challenges" && <StudentChallengeView studentEmail={session?.email || ""} studentName={profile.name} />}
                             {tab === "class-info" && <ClassInfoTab myClass={myClass} classmates={classmates} mySchedules={mySchedules} disciplines={disciplines} officialGrades={officialGrades} />}
                             {tab === "curriculum" && <CurriculumTab semesters={semesters} disciplines={disciplines} />}
                             {tab === "materials" && <MaterialsTab filteredMaterials={filteredMaterials} disciplines={disciplines} />}

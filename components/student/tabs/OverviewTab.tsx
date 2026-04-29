@@ -42,7 +42,7 @@ export function OverviewTab({ profile, onTabChange }: OverviewTabProps) {
                 <div className="h-full bg-emerald-neon w-[5%] shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
               </div>
               <div className="flex gap-4 mt-2">
-                <Button className="vibrant-button-emerald h-14 px-10 text-lg" onClick={() => onTabChange("exams")}>
+                <Button className="vibrant-button-emerald h-14 px-10 text-lg" onClick={() => onTabChange("challenges")}>
                   Iniciar Desafio
                 </Button>
                 <Button variant="ghost" className="text-white hover:bg-white/5 font-bold rounded-2xl h-14 px-8 border border-white/10" onClick={() => onTabChange("materials")}>
@@ -70,7 +70,7 @@ export function OverviewTab({ profile, onTabChange }: OverviewTabProps) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { id: "exams", label: "Quizes Semanais", sub: "Desbloqueie XP", icon: Trophy, color: "text-emerald-neon", bg: "bg-emerald-neon/10" },
+          { id: "challenges", label: "Quizes Semanais", sub: "Desbloqueie XP", icon: Trophy, color: "text-emerald-neon", bg: "bg-emerald-neon/10" },
           { id: "grades", label: "Meu Ranking", sub: "Pontos e Medalhas", icon: Star, color: "text-orange-vibrant", bg: "bg-orange-vibrant/10" },
           { id: "materials", label: "Grimório", sub: "Material de Estudo", icon: Library, color: "text-blue-400", bg: "bg-blue-400/10" },
           { id: "chat", label: "Suporte", sub: "Dúvidas e Chat", icon: MessageSquare, color: "text-white", bg: "bg-white/10" },
