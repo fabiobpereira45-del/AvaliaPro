@@ -302,30 +302,32 @@ export function AssessmentBuilder({ open, assessment, onClose, onSave }: Props) 
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
-        <DialogHeader>
-          <DialogTitle>{assessment ? "Editar Prova" : "Criar Nova Prova"}</DialogTitle>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] flex flex-col overflow-hidden p-0">
+        <div className="flex-shrink-0 px-6 pt-6 pb-2">
+          <DialogHeader>
+            <DialogTitle>{assessment ? "Editar Prova" : "Criar Nova Prova"}</DialogTitle>
+          </DialogHeader>
 
-        {/* Step indicator */}
-        <div className="flex items-center gap-2 px-1 py-4 sm:py-2 flex-wrap sm:flex-nowrap">
-          {[1, 2, 3, 4].map((s) => (
-            <div key={s} className="flex items-center gap-2 flex-1 min-w-[120px]">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 transition-all ${step > s ? "bg-emerald-neon text-white shadow-lg shadow-emerald-neon/20" :
-                step === s ? "bg-emerald-neon text-white shadow-lg shadow-emerald-neon/30 scale-110" :
-                  "bg-white/5 text-slate-500 border border-white/10"
-                }`}>
-                {step > s ? <Check className="h-4 w-4" /> : s}
+          {/* Step indicator */}
+          <div className="flex items-center gap-2 px-1 py-4 sm:py-2 flex-wrap sm:flex-nowrap">
+            {[1, 2, 3, 4].map((s) => (
+              <div key={s} className="flex items-center gap-2 flex-1 min-w-[120px]">
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black flex-shrink-0 transition-all ${step > s ? "bg-emerald-neon text-white shadow-lg shadow-emerald-neon/20" :
+                  step === s ? "bg-emerald-neon text-white shadow-lg shadow-emerald-neon/30 scale-110" :
+                    "bg-white/5 text-slate-500 border border-white/10"
+                  }`}>
+                  {step > s ? <Check className="h-4 w-4" /> : s}
+                </div>
+                <span className={`text-[11px] sm:text-xs font-medium ${step === s ? "text-foreground" : "text-muted-foreground"}`}>
+                  {s === 1 ? "Título" : s === 2 ? "Formato" : s === 3 ? "Questões" : "Visualizar"}
+                </span>
+                {s < 4 && <div className={`hidden sm:block h-px flex-1 ${step > s ? "bg-primary" : "bg-border"}`} />}
               </div>
-              <span className={`text-[11px] sm:text-xs font-medium ${step === s ? "text-foreground" : "text-muted-foreground"}`}>
-                {s === 1 ? "Título" : s === 2 ? "Formato" : s === 3 ? "Questões" : "Visualizar"}
-              </span>
-              {s < 4 && <div className={`hidden sm:block h-px flex-1 ${step > s ? "bg-primary" : "bg-border"}`} />}
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto py-2">
+        <div className="flex-1 overflow-y-auto py-2 px-6">
           {/* Step 1 */}
           {step === 1 && (
             <div className="flex flex-col gap-5 px-1">
@@ -790,7 +792,7 @@ export function AssessmentBuilder({ open, assessment, onClose, onSave }: Props) 
         </div>
 
         {/* Footer navigation */}
-        <div className="flex items-center justify-between pt-4 border-t border-border mt-2">
+        <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-t border-border">
           <Button
             variant="outline"
             onClick={() => {
