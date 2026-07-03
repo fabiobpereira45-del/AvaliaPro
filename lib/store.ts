@@ -390,17 +390,69 @@ export function clearStudentSession(): void {
 
 export async function getActiveAssessment(id?: string): Promise<Assessment | null> {
   const supabase = createClient()
-  const now = new Date().toISOString()
   let query = supabase.from('assessments').select('*').eq('is_published', true)
   
   if (id) {
     query = query.eq('id', id)
-  } else {
-    query = query.lte('open_at', now).or(`close_at.is.null,close_at.gte.${now}`)
   }
 
-  const { data } = await query.order('created_at', { ascending: false }).limit(1).maybeSingle()
-  return data ? mapAssessment(data) : null
+  const { data, error } = await query.order('created_at', { ascending: false })
+  
+  if (error || !data || data.length === 0) return null
+
+  const assessments = data.map(mapAssessment)
+  const now = new Date()
+
+  // Se um ID específico foi pedido, verificamos se ele não está arquivado
+  if (id) {
+    const a = assessments[0]
+    // Permitimos mesmo que seja privado se tiver o ID direto, mas bloqueamos arquivados
+    return a.archived ? null : a
+  }
+
+  // Caso contrário, buscamos a primeira que esteja dentro do prazo e NÃO seja privada
+  const active = assessments.find(a => {
+    if (a.archived) return false
+    if (a.modality === 'private') return false
+    
+    const isOpen = !a.openAt || new Date(a.openAt) <= now
+    const isNotClosed = !a.closeAt || new Date(a.closeAt) >= now
+    return isOpen && isNotClosed
+  })
+
+  return active || null
+}
+
+/** Busca todas as avaliações públicas ativas e publicadas. */
+export async function getPublicAssessments(): Promise<Assessment[]> {
+  const supabase = createClient()
+  // Buscamos todas e filtramos no JS para máxima confiabilidade e debug
+  const { data, error } = await supabase
+    .from('assessments')
+    .select('*')
+    .order('created_at', { ascending: false })
+  
+  if (error) {
+    console.error("Erro ao buscar avaliações:", error)
+    return []
+  }
+
+  const assessments = (data || []).map(mapAssessment)
+  const now = new Date()
+
+  return assessments.filter(a => {
+    // Só mostramos se estiver publicada e não estiver arquivada
+    if (!a.isPublished || a.archived) return false
+    
+    // Só mostramos se NÃO for privada (permitimos public, null, undefined, etc)
+    if (a.modality === 'private') return false
+    
+    // Verificação de datas (opcional)
+    const isOpen = !a.openAt || new Date(a.openAt) <= now
+    const isNotClosed = !a.closeAt || new Date(a.closeAt) >= now
+    
+    return isOpen && isNotClosed
+  })
 }
 
 export async function hasStudentSubmitted(email: string, assessmentId: string): Promise<boolean> {
@@ -803,12 +855,14 @@ export async function updateAssessment(id: string, data: Partial<Omit<Assessment
   if (data.releaseResults !== undefined) dbData.release_results = data.releaseResults
   if (data.modality !== undefined) dbData.modality = data.modality
   if (data.archived !== undefined) dbData.archived = data.archived
-  await supabase.from('assessments').update(dbData).eq('id', id)
+  const { error } = await supabase.from('assessments').update(dbData).eq('id', id)
+  if (error) throw new Error(error.message)
 }
 
 export async function deleteAssessment(id: string): Promise<void> {
   const supabase = createClient()
-  await supabase.from('assessments').delete().eq('id', id)
+  const { error } = await supabase.from('assessments').delete().eq('id', id)
+  if (error) throw new Error(error.message)
 }
 
 export async function getSubmissions(limit: number = 500): Promise<StudentSubmission[]> {
@@ -842,7 +896,8 @@ export async function getSubmissionsByAssessment(assessmentId: string): Promise<
 
 export async function deleteSubmission(id: string): Promise<void> {
   const supabase = createClient()
-  await supabase.from('student_submissions').delete().eq('id', id)
+  const { error } = await supabase.from('student_submissions').delete().eq('id', id)
+  if (error) throw new Error(error.message)
 }
 
 export async function updateSubmissionScore(id: string, newScore: number, totalPoints: number): Promise<void> {

@@ -48,10 +48,13 @@ export function SubmissionsTab({ assessments, allSubmissions, questions, onRefre
   }
 
   async function handleDelete() {
-    if (deleteId) {
+    if (!deleteId) return
+    try {
       await deleteSubmission(deleteId)
       onRefresh()
       setDeleteId(null)
+    } catch (err: any) {
+      alert("Erro ao excluir envio: " + err.message)
     }
   }
 
@@ -223,7 +226,8 @@ export function SubmissionsTab({ assessments, allSubmissions, questions, onRefre
                         <Pencil className="h-3.5 w-3.5" />
                       </Button>
                       <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
-                        title="Excluir Envio" onClick={() => setDeleteId(sub.id)}>
+                        title="Excluir Envio" onClick={() => setDeleteId(sub.id)}
+                        disabled={!isMaster}>
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
                     </div>
@@ -243,7 +247,7 @@ export function SubmissionsTab({ assessments, allSubmissions, questions, onRefre
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={handleDelete}>Excluir</AlertDialogAction>
+            <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={handleDelete} disabled={!isMaster}>Excluir</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

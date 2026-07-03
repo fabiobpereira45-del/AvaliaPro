@@ -104,14 +104,16 @@
   .premium-shadow {
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   }
+}
+@utility accent-gradient {
+  background: linear-gradient(135deg, var(--emerald-neon) 0%, var(--emerald-light) 100%);
+}
 
-  .premium-gradient {
-    background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy-slate) 100%);
-  }
+@utility premium-gradient {
+  background: linear-gradient(135deg, var(--navy-deep) 0%, var(--navy-slate) 100%);
+}
 
-  .accent-gradient {
-    background: linear-gradient(135deg, var(--emerald-neon) 0%, var(--emerald-light) 100%);
-  }
+@layer utilities {
 
   .hover-lift {
     @apply transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg;

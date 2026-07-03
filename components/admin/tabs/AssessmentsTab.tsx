@@ -52,10 +52,13 @@ export function AssessmentsTab({ assessments, submissions, questions, discipline
   }
 
   async function handleDelete() {
-    if (deleteId) {
+    if (!deleteId) return
+    try {
       await deleteAssessment(deleteId)
       onRefresh()
       setDeleteId(null)
+    } catch (err: any) {
+      alert("Erro ao excluir prova: " + err.message)
     }
   }
 
@@ -320,6 +323,7 @@ export function AssessmentsTab({ assessments, submissions, questions, discipline
                     className="h-8 px-2 text-destructive hover:text-destructive hover:bg-destructive/10"
                     onClick={() => setDeleteId(a.id)} 
                     title="Excluir Prova permanentemente"
+                    disabled={!isMaster}
                   >
                     <Trash2 className="h-3.5 w-3.5 sm:mr-1" />
                     <span className="hidden sm:inline">Excluir</span>
@@ -354,6 +358,7 @@ export function AssessmentsTab({ assessments, submissions, questions, discipline
             <AlertDialogAction 
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90" 
               onClick={handleDelete}
+              disabled={!isMaster}
             >
               Excluir permanentemente
             </AlertDialogAction>

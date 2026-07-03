@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
-  'https://vevivqcluyutlatwsnjh.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZldml2cWNsdXl1dGxhdHdzbmpoIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NTY1NTYxOCwiZXhwIjoyMDkxMjMxNjE4fQ.42Gk_uOBezQfMpWp6mpPLjFYmwf_te13DEz9Pek1oj0'
+  'https://kekuwxhqrzvrgbjiqyue.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtla3V3eGhxcnp2cmdiamlxeXVlIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3NzQxOTIxMCwiZXhwIjoyMDkyOTk1MjEwfQ.t7I7gSVojc6ybOsdBtbil7rB_lRtiZ18wVbCRhvqmNE'
 )
 
 async function checkStatus() {

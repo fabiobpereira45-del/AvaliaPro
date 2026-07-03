@@ -23,6 +23,7 @@ import {
     getChallenges, addChallenge, updateChallenge, deleteChallenge,
     getDisciplines
 } from "@/lib/store"
+import { AIChallengeAssistant } from "./ai-challenge-assistant"
 
 export function ChallengeManager() {
     const [challenges, setChallenges] = useState<Challenge[]>([])
@@ -42,6 +43,7 @@ export function ChallengeManager() {
     const [pointsXP, setPointsXP] = useState(20)
     const [isActive, setIsActive] = useState(true)
     const [isGenerating, setIsGenerating] = useState(false)
+    const [isAssistantOpen, setIsAssistantOpen] = useState(false)
 
     useEffect(() => {
         loadData()
@@ -131,28 +133,15 @@ export function ChallengeManager() {
     }
 
     async function generateWithAI() {
-        const disc = disciplines.find(d => d.id === disciplineId)?.name || "Teologia"
-        setIsGenerating(true)
-        try {
-            // Placeholder para integração com IA (poderia ser um fetch para OpenAI ou Claude)
-            // Aqui simulamos uma resposta baseada no tipo selecionado
-            setTimeout(() => {
-                if (type === "enigma") {
-                    setTitle(`O Mistério de ${disc}`)
-                    setDescription("Decifre o enigma teológico baseado nos textos da semana.")
-                    setContent("Sou o que não se vê, mas se sente no falar. Nasci no fogo de Atos, para a igreja guiar. Quem sou eu?")
-                    setCorrectAnswer("Espírito Santo")
-                } else if (type === "quiz") {
-                    setTitle(`Quiz Relâmpago: ${disc}`)
-                    setDescription("Teste seus conhecimentos rápidos.")
-                    setContent("1. Quem escreveu a epístola aos Romanos?\n2. Qual o tema central de Gálatas?")
-                }
-                setIsGenerating(false)
-            }, 1500)
-        } catch (error) {
-            alert("Erro na geração por IA")
-            setIsGenerating(false)
-        }
+        setIsAssistantOpen(true)
+    }
+
+    function handleApplyAIPrompt(data: { title: string, description: string, content: string, correctAnswer: string, type: ChallengeType }) {
+        setTitle(data.title)
+        setDescription(data.description)
+        setContent(data.content)
+        setCorrectAnswer(data.correctAnswer || "")
+        setType(data.type || type)
     }
 
     return (
@@ -377,6 +366,13 @@ export function ChallengeManager() {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+
+            <AIChallengeAssistant 
+                open={isAssistantOpen} 
+                onClose={() => setIsAssistantOpen(false)}
+                disciplines={disciplines}
+                onApplyPrompt={handleApplyAIPrompt}
+            />
         </div>
     )
 }

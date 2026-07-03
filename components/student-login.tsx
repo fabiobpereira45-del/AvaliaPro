@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { createClient } from "@/lib/supabase/client"
 import {
   getActiveAssessment,
+  getPublicAssessments,
   hasStudentSubmitted,
   saveStudentSession,
   getQuestionsByDiscipline,
@@ -37,9 +38,11 @@ export function StudentLogin({ onLogin, onResult, onBack, preloadedAssessmentId 
   const [isForgot, setIsForgot] = useState(false)
 
   const [assessment, setAssessment] = useState<Assessment | null>(null)
+  const [publicAssessments, setPublicAssessments] = useState<Assessment[]>([])
   const [questions, setQuestions] = useState<Question[]>([])
   const [disc, setDisc] = useState<Discipline | null>(null)
   const [isInitializing, setIsInitializing] = useState(true)
+  const [showSelection, setShowSelection] = useState(false)
 
   const supabase = createClient()
 
@@ -47,17 +50,19 @@ export function StudentLogin({ onLogin, onResult, onBack, preloadedAssessmentId 
     let mounted = true
     async function init() {
       try {
-        const a = await getActiveAssessment(preloadedAssessmentId)
-        if (!mounted) return
-        setAssessment(a)
-        if (a) {
-          const [allQs, allDs] = await Promise.all([
-            getQuestionsByDiscipline(a.disciplineId),
-            getDisciplines()
-          ])
+        if (preloadedAssessmentId) {
+          const a = await getActiveAssessment(preloadedAssessmentId)
           if (!mounted) return
-          setQuestions(allQs.filter(q => a.questionIds.includes(q.id)))
-          setDisc(allDs.find(d => d.id === a.disciplineId) || null)
+          setAssessment(a)
+          if (a) await loadAssessmentDetails(a)
+        } else {
+          const allPublic = await getPublicAssessments()
+          if (!mounted) return
+          setPublicAssessments(allPublic)
+          if (allPublic.length === 1) {
+            setAssessment(allPublic[0])
+            await loadAssessmentDetails(allPublic[0])
+          }
         }
       } catch (err: any) {
         console.error("Init error:", err)
@@ -66,27 +71,50 @@ export function StudentLogin({ onLogin, onResult, onBack, preloadedAssessmentId 
         if (mounted) setIsInitializing(false)
       }
     }
+
+    async function loadAssessmentDetails(a: Assessment) {
+      const [allQs, allDs] = await Promise.all([
+        getQuestionsByDiscipline(a.disciplineId),
+        getDisciplines()
+      ])
+      if (!mounted) return
+      setQuestions(allQs.filter(q => a.questionIds.includes(q.id)))
+      setDisc(allDs.find(d => d.id === a.disciplineId) || null)
+    }
+
     init()
     return () => { mounted = false }
   }, [preloadedAssessmentId])
 
-  async function processLogin(isQuery: boolean) {
+  async function processLogin(isQuery: boolean, selectedA?: Assessment) {
     setError(null)
     const trimName = name.trim()
     const trimEmail = email.trim().toLowerCase()
+    
     if (trimName.length < 3) { setError("Informe seu nome completo (mínimo 3 caracteres)."); return }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimEmail)) { setError("Informe um e-mail válido."); return }
-    setLoading(true)
-    if (!assessment) {
-      setError("Não foi possível carregar a avaliação.")
-      setLoading(false); return
-    }
-    const now = new Date()
-    const isTakeable = assessment.isPublished &&
-      (!assessment.openAt || new Date(assessment.openAt) <= now) &&
-      (!assessment.closeAt || new Date(assessment.closeAt) >= now)
 
-    const submitted = await hasStudentSubmitted(trimEmail, assessment.id)
+    const targetA = selectedA || assessment
+
+    // Se houver múltiplas provas e nenhuma selecionada, mostramos a seleção
+    if (!targetA && publicAssessments.length > 1) {
+      setShowSelection(true)
+      return
+    }
+
+    if (!targetA) {
+      setError("Selecione uma avaliação para continuar.")
+      return
+    }
+
+    setLoading(true)
+    
+    const now = new Date()
+    const isTakeable = targetA.isPublished &&
+      (!targetA.openAt || new Date(targetA.openAt) <= now) &&
+      (!targetA.closeAt || new Date(targetA.closeAt) >= now)
+
+    const submitted = await hasStudentSubmitted(trimEmail, targetA.id)
 
     if (!isQuery && !isTakeable) {
       setError("Esta avaliação está encerrada ou não disponível para novos envios.")
@@ -94,17 +122,17 @@ export function StudentLogin({ onLogin, onResult, onBack, preloadedAssessmentId 
     }
 
     if (isQuery && !submitted) {
-      setError("Nenhuma avaliação finalizada foi encontrada para este e-mail.")
+      setError("Nenhuma avaliação finalizada foi encontrada para este e-mail para esta prova.")
       setLoading(false); return
     }
     if (!isQuery && submitted) {
-      setError("ACESSO BLOQUEADO: Você já finalizou esta prova anteriormente. Não é permitido refazer a avaliação.")
+      setError(`ACESSO BLOQUEADO: Você já finalizou a prova "${targetA.title}" anteriormente.`)
       setLoading(false); return
     }
 
     // ── Ver resultado: fetch submission and show result directly ──────────────
     if (isQuery && submitted) {
-      const sub = await getSubmissionByEmailAndAssessment(trimEmail, assessment.id)
+      const sub = await getSubmissionByEmailAndAssessment(trimEmail, targetA.id)
       if (!sub) {
         setError("Não foi possível carregar o resultado. Tente novamente.")
         setLoading(false); return
@@ -115,10 +143,35 @@ export function StudentLogin({ onLogin, onResult, onBack, preloadedAssessmentId 
     }
 
     // ── Normal login: start assessment ────────────────────────────────────────
-    const session: StudentSession = { name: trimName, email: trimEmail, assessmentId: assessment.id, startedAt: new Date().toISOString() }
+    const session: StudentSession = { name: trimName, email: trimEmail, assessmentId: targetA.id, startedAt: new Date().toISOString() }
     saveStudentSession(session)
     onLogin(session)
     setLoading(false)
+  }
+
+  async function handleSelectAssessment(a: Assessment) {
+    setAssessment(a)
+    setError(null)
+    setLoading(true)
+    try {
+      const [allQs, allDs] = await Promise.all([
+        getQuestionsByDiscipline(a.disciplineId),
+        getDisciplines()
+      ])
+      setQuestions(allQs.filter(q => a.questionIds.includes(q.id)))
+      setDisc(allDs.find(d => d.id === a.disciplineId) || null)
+      setShowSelection(false)
+    } catch (err) {
+      setError("Erro ao carregar detalhes da prova selecionada.")
+    } finally {
+      setLoading(false)
+      // Após selecionar, tentamos logar automaticamente com os dados já preenchidos
+      const trimName = name.trim()
+      const trimEmail = email.trim().toLowerCase()
+      if (trimName.length >= 3 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimEmail)) {
+        processLogin(false, a)
+      }
+    }
   }
 
   const hasDiscursive = questions.some(q => q.type === "discursive")
@@ -141,9 +194,13 @@ export function StudentLogin({ onLogin, onResult, onBack, preloadedAssessmentId 
   }
 
   const now = new Date()
-  const isTakeable = assessment ? assessment.isPublished &&
-    (!assessment.openAt || new Date(assessment.openAt) <= now) &&
-    (!assessment.closeAt || new Date(assessment.closeAt) >= now) : false
+  let takeableStatus = "ok"
+  if (assessment) {
+    if (!assessment.isPublished) takeableStatus = "unpublished"
+    else if (assessment.openAt && new Date(assessment.openAt) > now) takeableStatus = "waiting"
+    else if (assessment.closeAt && new Date(assessment.closeAt) < now) takeableStatus = "closed"
+  }
+  const isTakeable = assessment && takeableStatus === "ok"
 
   return (
     <div className="flex flex-col items-center max-w-xl mx-auto w-full gap-8 relative z-10">
@@ -167,8 +224,8 @@ export function StudentLogin({ onLogin, onResult, onBack, preloadedAssessmentId 
           <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-neon/20 rounded-full blur-[100px] -mr-40 -mt-40 transition-all duration-1000 group-hover:bg-emerald-neon/30" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-vibrant/10 rounded-full blur-[80px] -ml-32 -mb-32 transition-all duration-1000 group-hover:bg-orange-vibrant/20" />
           
-          <div className="relative z-10">
-            <div className="flex items-center gap-4 mx-auto mb-6">
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="flex items-center justify-center gap-4 mb-6">
               <div className="h-20 w-20 bg-white rounded-3xl flex items-center justify-center shadow-2xl shadow-emerald-neon/20 transform transition-transform group-hover:scale-105 overflow-hidden p-2">
                  <img src="/avalia-logo.png" alt="AVALIA" className="h-full w-full object-contain" />
               </div>
@@ -205,6 +262,38 @@ export function StudentLogin({ onLogin, onResult, onBack, preloadedAssessmentId 
               <Sparkles className="h-5 w-5 text-orange-vibrant" />
               <span className="text-sm font-bold text-slate-200">{assessment.totalPoints.toFixed(1)} Pontos</span>
             </div>
+          </div>
+        </div>
+      ) : publicAssessments.length > 0 ? (
+        <div className="w-full rounded-[2.5rem] bg-[#020617] text-white p-10 flex flex-col items-center gap-8 text-center shadow-2xl border border-white/5 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-neon/20 rounded-full blur-[100px] -mr-40 -mt-40 transition-all duration-1000 group-hover:bg-emerald-neon/30" />
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-vibrant/10 rounded-full blur-[80px] -ml-32 -mb-32 transition-all duration-1000 group-hover:bg-orange-vibrant/20" />
+          
+          <div className="relative z-10 flex flex-col items-center">
+            <div className="h-20 w-20 bg-white rounded-3xl flex items-center justify-center shadow-2xl shadow-emerald-neon/20 transform transition-transform group-hover:scale-105 overflow-hidden p-2 mb-6">
+              <img src="/avalia-logo.png" alt="AVALIA" className="h-full w-full object-contain" />
+            </div>
+            
+            <div className="mb-4">
+              <span className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/5 text-emerald-neon text-[10px] font-black uppercase tracking-[0.2em] border border-white/10 backdrop-blur-md">
+                <Sparkles className="h-3.5 w-3.5" />
+                Selecione sua Prova
+              </span>
+            </div>
+            <h1 className="text-4xl font-black tracking-tighter text-white leading-none mb-4">Múltiplas Avaliações</h1>
+            <p className="text-slate-400 text-lg font-medium max-w-sm">
+              Identificamos <span className="text-white font-bold">{publicAssessments.length} provas públicas</span> ativas. Insira seus dados para escolher qual realizar.
+            </p>
+          </div>
+
+          <div className="flex justify-center pt-4 w-full mt-2 relative z-10">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowSelection(true)}
+              className="border-white/10 bg-white/5 hover:bg-white/10 text-white font-bold rounded-xl h-12 px-8"
+            >
+              Ver Lista de Provas
+            </Button>
           </div>
         </div>
       ) : (
@@ -308,7 +397,10 @@ export function StudentLogin({ onLogin, onResult, onBack, preloadedAssessmentId 
                   disabled={loading || !assessment || !isTakeable} 
                   className="vibrant-button-emerald font-black h-16 text-lg flex-1 rounded-2xl"
                 >
-                  {isTakeable ? "INICIAR AVALIAÇÃO" : "EXAME INDISPONÍVEL"} <ArrowRight className="ml-2 h-6 w-6" />
+                  {isTakeable ? "INICIAR AVALIAÇÃO" : 
+                   takeableStatus === "waiting" ? "AGUARDANDO ABERTURA" :
+                   takeableStatus === "closed" ? "AVALIAÇÃO ENCERRADA" :
+                   "EXAME INDISPONÍVEL"} <ArrowRight className="ml-2 h-6 w-6" />
                 </Button>
               </div>
 
@@ -333,6 +425,41 @@ export function StudentLogin({ onLogin, onResult, onBack, preloadedAssessmentId 
           </div>
         )}
       </div>
+
+      {/* Selection Modal or Overlay */}
+      {showSelection && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-300">
+          <div className="bg-white rounded-[2.5rem] w-full max-w-2xl overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+            <div className="bg-[#020617] p-8 text-white relative">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-neon/10 rounded-full blur-[60px] -mr-24 -mt-24" />
+              <h3 className="text-2xl font-black tracking-tight mb-2 relative z-10">Escolha sua Avaliação</h3>
+              <p className="text-slate-400 text-sm relative z-10">Existem múltiplas provas públicas disponíveis. Selecione a que deseja realizar agora.</p>
+            </div>
+            <div className="p-6 max-h-[60vh] overflow-y-auto flex flex-col gap-3">
+              {publicAssessments.map((a) => (
+                <button
+                  key={a.id}
+                  onClick={() => handleSelectAssessment(a)}
+                  className="group flex flex-col gap-1 p-5 rounded-2xl border-2 border-slate-100 hover:border-emerald-neon/40 hover:bg-emerald-neon/[0.02] text-left transition-all active:scale-[0.98]"
+                >
+                  <div className="flex justify-between items-center">
+                    <span className="text-lg font-extrabold text-slate-900 group-hover:text-emerald-neon transition-colors leading-tight">{a.title}</span>
+                    <ArrowRight className="h-5 w-5 text-slate-300 group-hover:text-emerald-neon transition-all group-hover:translate-x-1" />
+                  </div>
+                  <div className="flex items-center gap-3 text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">
+                    <span className="flex items-center gap-1"><BookOpenCheck className="h-3.5 w-3.5" /> {a.questionIds.length} Questões</span>
+                    <span className="w-1 h-1 bg-slate-300 rounded-full" />
+                    <span>{a.professor}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+            <div className="p-6 border-t border-slate-100 bg-slate-50 flex justify-end">
+              <Button variant="ghost" onClick={() => setShowSelection(false)} className="font-bold text-slate-500">Voltar</Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground bg-white/50 px-4 py-2 rounded-full border border-slate-200">
         <ShieldCheck className="h-4 w-4 text-green-600" />

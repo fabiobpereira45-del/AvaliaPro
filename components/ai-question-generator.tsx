@@ -124,10 +124,16 @@ INICIE A ELABORAÇÃO AGORA:`
 
       <Tabs defaultValue="prompt" className="w-full">
         <TabsList className="grid w-full grid-cols-2 bg-muted/50 p-1 rounded-xl mb-4">
-          <TabsTrigger value="prompt" className="rounded-lg data-[state=active]:accent-gradient data-[state=active]:text-white transition-all py-2 gap-2">
+          <TabsTrigger 
+            value="prompt" 
+            className="rounded-lg data-[state=active]:bg-[var(--emerald-neon)] data-[state=active]:bg-linear-to-br data-[state=active]:from-[var(--emerald-neon)] data-[state=active]:to-[var(--emerald-light)] data-[state=active]:text-white data-[state=active]:shadow-sm transition-all py-2 gap-2"
+          >
             <Settings2 className="h-4 w-4" /> 1. Configurar Prompt
           </TabsTrigger>
-          <TabsTrigger value="external" className="rounded-lg data-[state=active]:accent-gradient data-[state=active]:text-white transition-all py-2 gap-2">
+          <TabsTrigger 
+            value="external" 
+            className="rounded-lg data-[state=active]:bg-[var(--emerald-neon)] data-[state=active]:bg-linear-to-br data-[state=active]:from-[var(--emerald-neon)] data-[state=active]:to-[var(--emerald-light)] data-[state=active]:text-white data-[state=active]:shadow-sm transition-all py-2 gap-2"
+          >
             <MessageSquare className="h-4 w-4" /> 2. Abrir IA Externa
           </TabsTrigger>
         </TabsList>
