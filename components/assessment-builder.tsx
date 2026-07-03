@@ -327,7 +327,7 @@ export function AssessmentBuilder({ open, assessment, onClose, onSave }: Props) 
           </div>
         </div>
 
-        <div className="overflow-y-auto py-2 px-6" style={{ maxHeight: 'calc(90vh - 160px)' }}>
+        <div className="overflow-y-auto py-2 px-6" style={{ maxHeight: 'calc(90vh - 220px)' }}>
           {/* Step 1 */}
           {step === 1 && (
             <div className="flex flex-col gap-5 px-1">
