@@ -302,8 +302,7 @@ export function AssessmentBuilder({ open, assessment, onClose, onSave }: Props) 
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="sm:max-w-2xl h-[90vh] overflow-hidden p-0 relative">
-        <div className="absolute inset-0 flex flex-col">
+      <DialogContent className="sm:max-w-2xl max-h-[90vh] flex flex-col gap-0 overflow-hidden p-0">
         <div className="flex-shrink-0 px-6 pt-6 pb-2">
           <DialogHeader>
             <DialogTitle>{assessment ? "Editar Prova" : "Criar Nova Prova"}</DialogTitle>
@@ -328,7 +327,7 @@ export function AssessmentBuilder({ open, assessment, onClose, onSave }: Props) 
           </div>
         </div>
 
-        <div className="flex-1 min-h-0 overflow-y-auto py-2 px-6">
+        <div className="overflow-y-auto py-2 px-6" style={{ maxHeight: 'calc(90vh - 160px)' }}>
           {/* Step 1 */}
           {step === 1 && (
             <div className="flex flex-col gap-5 px-1">
@@ -827,7 +826,6 @@ export function AssessmentBuilder({ open, assessment, onClose, onSave }: Props) 
               )}
             </Button>
           )}
-        </div>
         </div>
       </DialogContent>
     </Dialog>
