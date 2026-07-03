@@ -113,8 +113,11 @@ export function Step3Questions({ state, availableQuestions, onUpdate, onAutoSele
                 const checked = state.selectedIds.has(q.id)
                 const disabled = !checked && state.selectedIds.size >= state.questionCount
                 return (
-                  <label
+                  <div
                     key={q.id}
+                    onClick={() => {
+                      if (!disabled) onToggle(q.id)
+                    }}
                     className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
                       checked ? "border-primary bg-primary/5" :
                       disabled ? "border-border opacity-40 cursor-not-allowed" :
@@ -126,13 +129,6 @@ export function Step3Questions({ state, availableQuestions, onUpdate, onAutoSele
                     }`}>
                       {checked && <Check className="h-3 w-3 text-primary-foreground" />}
                     </div>
-                    <input
-                      type="checkbox"
-                      className="sr-only"
-                      checked={checked}
-                      disabled={disabled}
-                      onChange={() => onToggle(q.id)}
-                    />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-xs font-semibold text-muted-foreground">Q{i + 1}</span>
@@ -142,7 +138,7 @@ export function Step3Questions({ state, availableQuestions, onUpdate, onAutoSele
                       </div>
                       <span className="text-sm">{q.text}</span>
                     </div>
-                  </label>
+                  </div>
                 )
               })}
             </div>
