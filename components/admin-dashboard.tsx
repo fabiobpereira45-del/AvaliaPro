@@ -30,7 +30,7 @@ import {
 import { printStudentPDF, printAnswerKeyPDF } from "@/lib/pdf"
 import { ErrorBoundary } from "@/components/error-boundary"
 import { QuestionBank } from "@/components/question-bank"
-import { AssessmentBuilder } from "@/components/assessment-builder"
+
 import { ProfessorManager } from "@/components/professor-manager"
 import { SemesterManager } from "@/components/semester-manager"
 import { StudyMaterialManager } from "@/components/study-material-manager"

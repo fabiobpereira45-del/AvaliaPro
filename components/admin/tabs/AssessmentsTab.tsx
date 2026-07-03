@@ -12,7 +12,7 @@ import {
 import { type Assessment, type StudentSubmission, type Question, type Discipline, updateAssessment, deleteAssessment, getQuestionsByDiscipline } from "@/lib/store"
 import { printBlankAssessmentPDF, printAnswerKeyPDF } from "@/lib/pdf"
 import { ErrorBoundary } from "@/components/error-boundary"
-import { AssessmentBuilder } from "@/components/assessment-builder"
+import { ExamBuilder } from "@/components/exam-builder/ExamBuilder"
 import { cn } from "@/lib/utils"
 
 interface Props {
@@ -335,14 +335,14 @@ export function AssessmentsTab({ assessments, submissions, questions, discipline
         </div>
       )}
 
-      <ErrorBoundary>
-        <AssessmentBuilder
+      {builderOpen && (
+        <ExamBuilder
           open={builderOpen}
           assessment={editingAssessment}
           onClose={() => setBuilderOpen(false)}
           onSave={onRefresh}
         />
-      </ErrorBoundary>
+      )}
 
       <AlertDialog open={!!deleteId} onOpenChange={(o) => !o && setDeleteId(null)}>
         <AlertDialogContent>
