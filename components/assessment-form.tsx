@@ -12,10 +12,14 @@ import {
 import {
   getAssessmentById, getQuestionsByDiscipline, saveDraftAnswers, getDraftAnswers,
   saveSubmission, calculateScore, clearStudentSession, getDisciplines,
-  getSubmissionByEmailAndAssessment,
+  getSubmissionByEmailAndAssessment, deleteSubmission,
   type StudentSession, type StudentAnswer, type StudentSubmission, uid,
   type Assessment, type Question, type Discipline,
 } from "@/lib/store"
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { cn } from "@/lib/utils"
 
 const SCROLL_HIDE_STYLE = {
@@ -53,10 +57,19 @@ export function AssessmentForm({ session, onSubmit, onBack }: Props) {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const hasSubmittedRef = useRef(false)
 
-  const [answers, setAnswers] = useState<StudentAnswer[]>(() => getDraftAnswers())
+  const [answers, setAnswers] = useState<StudentAnswer[]>(() => {
+    if (session.reopenedAnswers && session.reopenedAnswers.length > 0) {
+      saveDraftAnswers(session.reopenedAnswers)
+      return session.reopenedAnswers
+    }
+    return getDraftAnswers()
+  })
   const [currentStep, setCurrentStep] = useState(0) // 0 to questions.length (last is review)
   const [showGrid, setShowGrid] = useState(false)
   const [flagged, setFlagged] = useState<Set<string>>(new Set()) // Questions marked for review
+
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [unansweredCount, setUnansweredCount] = useState(0)
 
   const [elapsed, setElapsed] = useState(0)
   const [timeLeft, setTimeLeft] = useState<number | null>(null)
@@ -68,7 +81,7 @@ export function AssessmentForm({ session, onSubmit, onBack }: Props) {
     async function load() {
       // Double-check if student already submitted (Security Block)
       const existing = await getSubmissionByEmailAndAssessment(session.email, session.assessmentId)
-      if (existing && existing.submittedAt) {
+      if (existing && existing.submittedAt && existing.timeElapsedSeconds !== -1) {
           console.log("Aluno já realizou esta prova. Redirecionando para o resultado.");
           onSubmit(existing);
           return;
@@ -118,10 +131,11 @@ export function AssessmentForm({ session, onSubmit, onBack }: Props) {
     return () => { mounted = false }
   }, [session.assessmentId])
 
-  const handleFinalize = useCallback(async () => {
+  const confirmFinalize = useCallback(async () => {
     if (!assessment || isSubmitting || hasSubmittedRef.current) return
     
     setIsSubmitting(true)
+    setShowConfirmModal(false)
     hasSubmittedRef.current = true
 
     try {
@@ -141,6 +155,13 @@ export function AssessmentForm({ session, onSubmit, onBack }: Props) {
         timeElapsedSeconds: elapsedSecs,
         focusLostCount,
       }
+      // Se for uma prova reaberta, podemos deletar o registro temporário (o draft reaberto) para evitar duplicatas,
+      // ou simplesmente saveSubmission vai sobrescrever usando um novo ID.
+      // O ideal seria que saveSubmission atualizasse o existente se usarmos o session.reopenedSubmissionId
+      if (session.reopenedSubmissionId) {
+        sub.id = session.reopenedSubmissionId // Sobrescreve o mesmo ID no backend!
+      }
+
       await saveSubmission(sub)
       clearStudentSession()
       onSubmit(sub)
@@ -152,6 +173,16 @@ export function AssessmentForm({ session, onSubmit, onBack }: Props) {
     }
   }, [answers, assessment, questions, session, onSubmit, focusLostCount, isSubmitting])
 
+  const handleFinalizeRequest = useCallback(() => {
+    let unanswered = 0
+    questions.forEach(q => {
+      const a = answers.find(ans => ans.questionId === q.id)?.answer
+      if (!a) unanswered++
+    })
+    setUnansweredCount(unanswered)
+    setShowConfirmModal(true)
+  }, [answers, questions])
+
   useEffect(() => {
     const interval = setInterval(() => {
       setElapsed(Math.floor((Date.now() - startedAt.current.getTime()) / 1000))
@@ -159,14 +190,14 @@ export function AssessmentForm({ session, onSubmit, onBack }: Props) {
         if (prev === null) return null
         if (prev <= 1) {
           clearInterval(interval)
-          handleFinalize()
+          confirmFinalize()
           return 0
         }
         return prev - 1
       })
     }, 1000)
     return () => clearInterval(interval)
-  }, [handleFinalize])
+  }, [confirmFinalize])
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -181,8 +212,8 @@ export function AssessmentForm({ session, onSubmit, onBack }: Props) {
   useEffect(() => {
     if (isInitializing || !assessment?.closeAt) return
     const ms = new Date(assessment.closeAt).getTime() - Date.now()
-    if (ms <= 0) { handleFinalize(); return }
-    const t = setTimeout(() => handleFinalize(), ms)
+    if (ms <= 0) { confirmFinalize(); return }
+    const t = setTimeout(() => confirmFinalize(), ms)
     return () => clearTimeout(t)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [assessment, isInitializing])
@@ -516,7 +547,7 @@ export function AssessmentForm({ session, onSubmit, onBack }: Props) {
                     "rounded-xl font-bold h-14 px-8 text-white shadow-lg shadow-slate-300 transition-all w-full sm:w-auto",
                     isSubmitting ? "bg-slate-400 cursor-not-allowed" : "bg-black hover:bg-slate-800"
                   )}
-                  onClick={() => handleFinalize()}
+                  onClick={() => handleFinalizeRequest()}
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
@@ -741,13 +772,49 @@ export function AssessmentForm({ session, onSubmit, onBack }: Props) {
           <Button
               size="lg"
               className="rounded-2xl h-16 px-12 font-black text-lg bg-primary text-white hover:bg-primary/90 shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
-              onClick={handleFinalize}
+              onClick={handleFinalizeRequest}
               disabled={isSubmitting}
             >
               {isSubmitting ? "Enviando..." : "Finalizar Avaliação"}
           </Button>
         </footer>
       )}
+
+      {/* Modal de Confirmação de Envio */}
+      <AlertDialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
+        <AlertDialogContent className="rounded-2xl border-0 shadow-2xl">
+          <AlertDialogHeader className="mb-2">
+            <AlertDialogTitle className="text-2xl font-bold flex items-center gap-2">
+              {unansweredCount > 0 ? (
+                <><AlertTriangle className="h-6 w-6 text-amber-500" /> Aviso Importante</>
+              ) : (
+                <><CheckCircle2 className="h-6 w-6 text-emerald-500" /> Confirmar Envio</>
+              )}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-base text-slate-600">
+              {unansweredCount > 0 ? (
+                <>
+                  Você deixou <strong>{unansweredCount} questão(ões) em branco</strong>. 
+                  Se você enviar agora, não receberá nota nestas questões. 
+                  <br /><br />
+                  Tem certeza que deseja finalizar a prova assim mesmo?
+                </>
+              ) : (
+                "Você respondeu todas as questões. Confirmar o envio definitivo desta prova? Esta ação não pode ser desfeita."
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="sm:justify-between sm:space-x-4">
+            <AlertDialogCancel className="w-full sm:w-auto font-medium">Voltar e Revisar</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={confirmFinalize}
+              className={`w-full sm:w-auto font-bold ${unansweredCount > 0 ? "bg-amber-600 hover:bg-amber-700 text-white" : "bg-primary text-primary-foreground hover:bg-primary/90"}`}
+            >
+              Sim, Finalizar Prova
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

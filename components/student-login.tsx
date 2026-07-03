@@ -114,15 +114,17 @@ export function StudentLogin({ onLogin, onResult, onBack, preloadedAssessmentId 
       (!targetA.openAt || new Date(targetA.openAt) <= now) &&
       (!targetA.closeAt || new Date(targetA.closeAt) >= now)
 
-    const submitted = await hasStudentSubmitted(trimEmail, targetA.id)
+    const existing = await getSubmissionByEmailAndAssessment(trimEmail, targetA.id)
+    const isReopened = existing && existing.timeElapsedSeconds === -1
+    const submitted = existing && !isReopened
 
     if (!isQuery && !isTakeable) {
       setError("Esta avaliação está encerrada ou não disponível para novos envios.")
       setLoading(false); return
     }
 
-    if (isQuery && !submitted) {
-      setError("Nenhuma avaliação finalizada foi encontrada para este e-mail para esta prova.")
+    if (isQuery && !submitted && !isReopened) {
+      setError("Nenhuma avaliação foi encontrada para este e-mail nesta prova.")
       setLoading(false); return
     }
     if (!isQuery && submitted) {
@@ -131,21 +133,34 @@ export function StudentLogin({ onLogin, onResult, onBack, preloadedAssessmentId 
     }
 
     // ── Ver resultado: fetch submission and show result directly ──────────────
-    if (isQuery && submitted) {
-      const sub = await getSubmissionByEmailAndAssessment(trimEmail, targetA.id)
-      if (!sub) {
-        setError("Não foi possível carregar o resultado. Tente novamente.")
-        setLoading(false); return
-      }
+    if (isQuery && submitted && existing && existing.timeElapsedSeconds !== -1) {
       setLoading(false)
-      if (onResult) onResult(sub)
+      if (onResult) onResult(existing)
       return
     }
 
     // ── Normal login: start assessment ────────────────────────────────────────
-    const session: StudentSession = { name: trimName, email: trimEmail, assessmentId: targetA.id, startedAt: new Date().toISOString() }
-    saveStudentSession(session)
-    onLogin(session)
+    let sessionObj: StudentSession
+    if (existing && existing.timeElapsedSeconds === -1) {
+      sessionObj = {
+        name: existing.studentName,
+        email: existing.studentEmail,
+        assessmentId: targetA.id,
+        startedAt: new Date().toISOString(),
+        reopenedAnswers: existing.answers,
+        reopenedSubmissionId: existing.id
+      }
+    } else {
+      sessionObj = {
+        name: trimName,
+        email: trimEmail,
+        assessmentId: targetA.id,
+        startedAt: new Date().toISOString()
+      }
+    }
+
+    saveStudentSession(sessionObj)
+    onLogin(sessionObj)
     setLoading(false)
   }
 

@@ -1,17 +1,18 @@
 "use client"
 
 import { useState } from "react"
-import { BarChart3, CheckCircle2, Download, FileText, Pencil, Trophy, Trash2, Users, XCircle } from "lucide-react"
+import { BarChart3, CheckCircle2, Download, FileText, Pencil, Trophy, Trash2, Users, XCircle, Eye, RotateCcw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
-import { type Assessment, type StudentSubmission, type Question, deleteSubmission, updateSubmissionScore } from "@/lib/store"
+import { type Assessment, type StudentSubmission, type Question, deleteSubmission, updateSubmissionScore, reopenSubmission } from "@/lib/store"
 import { printStudentPDF } from "@/lib/pdf"
-import { formatDate, formatTime } from "../admin-utils"
+import { formatTime } from "../admin-utils"
 import { cn } from "@/lib/utils"
+import { StudentSubmissionView } from "../submissions/StudentSubmissionView"
 
 interface Props {
   assessments: Assessment[]
@@ -24,6 +25,7 @@ interface Props {
 export function SubmissionsTab({ assessments, allSubmissions, questions, onRefresh, isMaster }: Props) {
   const [selectedAssessmentId, setSelectedAssessmentId] = useState(assessments[0]?.id ?? "")
   const [deleteId, setDeleteId] = useState<string | null>(null)
+  const [viewingSub, setViewingSub] = useState<StudentSubmission | null>(null)
 
   const [editingSubId, setEditingSubId] = useState<string | null>(null)
   const [editScore, setEditScore] = useState<string>("")
@@ -55,6 +57,16 @@ export function SubmissionsTab({ assessments, allSubmissions, questions, onRefre
       setDeleteId(null)
     } catch (err: any) {
       alert("Erro ao excluir envio: " + err.message)
+    }
+  }
+
+  async function handleReopen(sub: StudentSubmission) {
+    if (!confirm(`Tem certeza que deseja reabrir a prova de ${sub.studentName}? Ele poderá continuar de onde parou.`)) return
+    try {
+      await reopenSubmission(sub.id)
+      onRefresh()
+    } catch (err: any) {
+      alert("Erro ao reabrir prova: " + err.message)
     }
   }
 
@@ -215,16 +227,24 @@ export function SubmissionsTab({ assessments, allSubmissions, questions, onRefre
                     )}
                   </td>
                   <td className="px-4 py-3 text-center hidden lg:table-cell text-muted-foreground">
-                    {formatDate(sub.submittedAt)}
+                    {sub.timeElapsedSeconds === -1 ? <span className="text-amber-500 font-bold text-xs bg-amber-50 px-2 py-1 rounded">Reaberta</span> : sub.submittedAt ? new Date(sub.submittedAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "---"}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-1">
+                      <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-100" title="Visualizar Respostas" onClick={() => setViewingSub(sub)}>
+                        <Eye className="h-3.5 w-3.5" />
+                      </Button>
                       <Button size="sm" variant="ghost" className="h-8 w-8 p-0" title="Baixar PDF" onClick={() => handlePDF(sub)}>
                         <Download className="h-3.5 w-3.5" />
                       </Button>
                       <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-amber-600 hover:text-amber-700 hover:bg-amber-100" title="Editar Nota" onClick={() => startEditingScore(sub)}>
                         <Pencil className="h-3.5 w-3.5" />
                       </Button>
+                      {isMaster && (
+                        <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-indigo-600 hover:text-indigo-700 hover:bg-indigo-100" title="Reabrir Prova" onClick={() => handleReopen(sub)}>
+                          <RotateCcw className="h-3.5 w-3.5" />
+                        </Button>
+                      )}
                       <Button size="sm" variant="ghost" className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
                         title="Excluir Envio" onClick={() => setDeleteId(sub.id)}
                         disabled={!isMaster}>
@@ -251,6 +271,16 @@ export function SubmissionsTab({ assessments, allSubmissions, questions, onRefre
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {viewingSub && selectedAssessment && (
+        <StudentSubmissionView
+          open={!!viewingSub}
+          submission={viewingSub}
+          assessment={selectedAssessment}
+          questions={questions}
+          onClose={() => setViewingSub(null)}
+        />
+      )}
     </div>
   )
 }

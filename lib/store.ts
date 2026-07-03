@@ -23,7 +23,7 @@ export interface FinancialSettings {
   pixQRCode?: string;
 }
 export interface ProfessorSession { loggedIn: boolean; professorId: string; role: "master" | "professor"; avatar_url?: string | null; expiresAt: string }
-export interface StudentSession { name: string; email: string; assessmentId: string; startedAt: string }
+export interface StudentSession { name: string; email: string; assessmentId: string; startedAt: string; reopenedAnswers?: StudentAnswer[]; reopenedSubmissionId?: string; }
 export interface StudentProfile { id: string; auth_user_id: string; name: string; cpf: string; email: string; enrollment_number: string; phone?: string; address?: string; church?: string; pastor_name?: string; class_id?: string; avatar_url?: string | null; bio?: string | null; birth_date?: string; street?: string; number?: string; neighborhood?: string; city?: string; state?: string; status: "pending" | "active" | "inactive"; created_at: string; }
 export interface ChatMessage { id: string; studentId: string; disciplineId: string; message: string; isFromStudent: boolean; read: boolean; createdAt: string; }
 export interface Attendance { id: string; studentId: string; disciplineId: string; date: string; isPresent: boolean; type?: "presencial" | "ead"; createdAt: string; }
@@ -897,6 +897,14 @@ export async function getSubmissionsByAssessment(assessmentId: string): Promise<
 export async function deleteSubmission(id: string): Promise<void> {
   const supabase = createClient()
   const { error } = await supabase.from('student_submissions').delete().eq('id', id)
+  if (error) throw new Error(error.message)
+}
+
+export async function reopenSubmission(id: string): Promise<void> {
+  const supabase = createClient()
+  const { error } = await supabase.from('student_submissions').update({
+    time_elapsed_seconds: -1
+  }).eq('id', id)
   if (error) throw new Error(error.message)
 }
 
