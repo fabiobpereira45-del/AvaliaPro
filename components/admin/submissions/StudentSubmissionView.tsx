@@ -31,14 +31,19 @@ export function StudentSubmissionView({ open, submission, assessment, questions,
 
   return (
     <>
-      <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" onClick={e => e.stopPropagation()}>
-        <div 
-          className="bg-white rounded-2xl shadow-2xl border w-full max-w-4xl overflow-hidden flex flex-col"
-          style={{ height: "90vh", maxHeight: "90vh" }}
+      {/* Backdrop — clique fora fecha */}
+      <div
+        className="fixed inset-0 z-[200] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-8 overflow-y-auto"
+        onClick={onClose}
+      >
+        {/* Modal — stopPropagation para não fechar ao clicar dentro */}
+        <div
+          className="relative bg-white rounded-2xl shadow-2xl border w-full max-w-4xl flex flex-col my-auto"
+          style={{ maxHeight: "88vh" }}
+          onClick={e => e.stopPropagation()}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b bg-slate-50 shrink-0">
+          <div className="flex items-center justify-between px-6 py-4 border-b bg-slate-50 rounded-t-2xl shrink-0">
             <div>
               <h2 className="text-xl font-bold text-slate-900">Respostas do Aluno</h2>
               <div className="text-sm text-slate-500 mt-1 flex items-center gap-2">
@@ -211,11 +216,22 @@ export function StudentSubmissionView({ open, submission, assessment, questions,
                         })}
                       </div>
                     )}
-
                   </div>
                 </div>
               )
             })}
+          </div>
+
+          {/* Footer com botão Fechar */}
+          <div className="shrink-0 border-t bg-white px-6 py-4 flex justify-between items-center rounded-b-2xl">
+            <span className="text-sm text-slate-400">Clique fora do painel ou no botão para fechar</span>
+            <button
+              onClick={onClose}
+              className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 text-white text-sm font-semibold hover:bg-slate-700 transition-colors shadow"
+            >
+              <X className="h-4 w-4" />
+              Fechar
+            </button>
           </div>
         </div>
       </div>
