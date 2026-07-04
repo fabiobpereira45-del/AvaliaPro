@@ -192,7 +192,7 @@ export function StudentChallengeView({ studentEmail, studentName }: Props) {
             {/* Challenge Detail Overlay */}
             {selectedChallenge && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-8 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-                    <div className="bg-white w-full max-w-2xl rounded-[3rem] overflow-hidden shadow-2xl flex flex-col max-h-full">
+                    <div className="bg-white w-full max-w-2xl rounded-3xl sm:rounded-[3rem] overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
                         <div className="bg-[#020617] p-8 text-white relative">
                             <Button 
                                 variant="ghost" 
