@@ -73,7 +73,7 @@ Por favor, gere um conteúdo teologicamente rico, preciso e desafiador.`
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="bg-white w-full max-w-2xl rounded-[3rem] overflow-hidden shadow-2xl border border-white/20 animate-in zoom-in-95 duration-300">
+            <div className="bg-white w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl overflow-hidden shadow-2xl border border-white/20 animate-in zoom-in-95 duration-300">
                 
                 {/* Header Section */}
                 <div className="bg-slate-50 p-6 border-b border-slate-100 relative">
@@ -123,7 +123,7 @@ Por favor, gere um conteúdo teologicamente rico, preciso e desafiador.`
                 </div>
 
                 {/* Content Area */}
-                <div className="p-8">
+                <div className="p-6 overflow-y-auto flex-1">
                     {step === 1 ? (
                         <div className="space-y-8 animate-in slide-in-from-right-4 duration-500">
                             <div className="grid grid-cols-2 gap-8">
@@ -213,7 +213,7 @@ Por favor, gere um conteúdo teologicamente rico, preciso e desafiador.`
                             </div>
 
                             {/* Summary & Copy Section */}
-                            <div className="bg-slate-50 rounded-3xl p-6 flex items-center justify-between border border-slate-100">
+                            <div className="bg-slate-50 rounded-2xl p-5 flex items-center justify-between border border-slate-100">
                                 <div>
                                     <h4 className="text-sm font-black text-slate-900">Tudo pronto?</h4>
                                     <p className="text-xs text-slate-500">O prompt será gerado para o tipo: <span className="text-indigo-600 font-bold uppercase tracking-wider">{missionType}</span></p>
