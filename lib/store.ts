@@ -2042,9 +2042,9 @@ export async function deleteChallenge(id: string): Promise<void> {
   await supabase.from('challenges').delete().eq('id', id)
 }
 
-export async function getChallengeSubmissions(challengeId: string): Promise<ChallengeSubmission[]> {
+export async function getChallengeSubmissions(studentEmail: string): Promise<ChallengeSubmission[]> {
   const supabase = createClient()
-  const { data } = await supabase.from('challenge_submissions').select('*').eq('challenge_id', challengeId)
+  const { data } = await supabase.from('challenge_submissions').select('*').eq('student_email', studentEmail)
   return (data || []).map(mapChallengeSubmission)
 }
 

@@ -11,6 +11,7 @@ import { StudentDashboard } from "@/components/student-dashboard"
 import { EnrollmentForm } from "@/components/enrollment-form"
 import { GradeViewer } from "@/components/grade-viewer"
 import { InstitutionalManager } from "@/components/institutional-manager"
+import { PublicChallengesPortal } from "@/components/public-challenges-portal"
 import {
   getStudentSession,
   getSubmissionByEmailAndAssessment,
@@ -21,7 +22,7 @@ import {
 import { BookOpen, GraduationCap, ClipboardList, User, Trophy, Zap } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-type View = "landing" | "public-exam-login" | "student-portal-login" | "student-assessment" | "student-result" | "professor-login" | "admin" | "student-dashboard"
+type View = "landing" | "public-exam-login" | "student-portal-login" | "student-assessment" | "student-result" | "professor-login" | "admin" | "student-dashboard" | "public-challenges"
 
 export default function HomePage() {
   const [view, setView] = useState<View>("landing")
@@ -122,7 +123,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {!["student-dashboard", "student-portal-login", "student-assessment", "student-result"].includes(view) && (
+      {!["student-dashboard", "student-portal-login", "student-assessment", "student-result", "public-challenges"].includes(view) && (
         <AssessmentHeader
           studentName={session?.name}
           studentEmail={session?.email}
@@ -184,7 +185,7 @@ export default function HomePage() {
 
               {/* Desafios Semanais (Antiga Área do Aluno) */}
               <button
-                onClick={() => setView("student-portal-login")}
+                onClick={() => setView("public-challenges")}
                 className="group relative overflow-hidden bg-card border-2 border-border rounded-2xl p-6 text-left shadow-lg hover:shadow-xl hover:border-emerald-neon/40 hover:scale-[1.02] transition-all"
               >
                 <div className="absolute inset-0 bg-emerald-neon/5 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -262,6 +263,9 @@ export default function HomePage() {
             }}
             onLogout={handleLogout}
           />
+        )}
+        {view === "public-challenges" && (
+          <PublicChallengesPortal onBack={() => setView("landing")} />
         )}
       </main>
 
