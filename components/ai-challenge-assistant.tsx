@@ -57,15 +57,15 @@ REGRAS OBRIGATÓRIAS:
 - Nível de Complexidade: ${level}
 - Tipo de Missão: ${typeLabels[missionType]}
 ${missionType === 'quiz' ? '- ATENÇÃO: Crie APENAS UMA ÚNICA QUESTÃO de múltipla escolha. Na descrição ou conteúdo, inclua as alternativas (A, B, C, D).' : ''}
-${missionType === 'enigma' ? '- ATENÇÃO: NÃO CRIE MÚLTIPLAS ESCOLHAS. A resposta deve ser uma palavra, nome ou frase exata e curta.\n- Crie exatamente 3 dicas progressivas para ajudar o aluno se ele errar.' : ''}
+${missionType !== 'quiz' ? '- ATENÇÃO: NÃO CRIE MÚLTIPLAS ESCOLHAS. A resposta deve ser uma palavra, nome ou frase exata e curta.\n- Crie exatamente 3 dicas progressivas para ajudar o aluno se ele errar.\n- NÃO inclua as dicas dentro do "content", use o campo "hints" no JSON.' : ''}
 
 FORMATO DE RESPOSTA (JSON STRICT):
 {
   "title": "Título criativo e épico",
   "description": "Uma breve introdução narrativa que envolva o aluno",
-  "content": "O corpo do desafio (o enigma em si, ou a pergunta com as opções)",
-  "correctAnswer": "A resposta exata esperada (ex: a letra correta no quiz, ou a palavra/nome no enigma)",
-  ${missionType === 'enigma' ? '"hints": ["Dica 1 mais vaga", "Dica 2 moderada", "Dica 3 muito reveladora"],' : ''}
+  "content": "O corpo do desafio (o enigma em si, texto a decifrar, ou a pergunta com as opções)",
+  "correctAnswer": "A resposta exata esperada (ex: a letra correta no quiz, ou a palavra/nome na missão)",
+  ${missionType !== 'quiz' ? '"hints": ["Dica 1 mais vaga", "Dica 2 moderada", "Dica 3 muito reveladora"],' : ''}
   "type": "${missionType}"
 }
 O JSON DEVE SER VÁLIDO E SEM MARKDOWN EM VOLTA SE POSSÍVEL.

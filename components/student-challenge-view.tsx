@@ -72,7 +72,7 @@ export function StudentChallengeView({ studentEmail, studentName }: Props) {
         try {
             if (isCorrect) {
                 const penaltyPerFail = Math.floor(selectedChallenge.pointsXP * 0.2)
-                const calculatedXP = selectedChallenge.type === 'enigma' 
+                const calculatedXP = selectedChallenge.type !== 'quiz' 
                     ? Math.max(selectedChallenge.pointsXP - (failedAttempts * penaltyPerFail), 10)
                     : selectedChallenge.pointsXP
 
@@ -92,7 +92,7 @@ export function StudentChallengeView({ studentEmail, studentName }: Props) {
                     loadData()
                 }, 2000)
             } else {
-                if (selectedChallenge.type === 'enigma') {
+                if (selectedChallenge.type !== 'quiz') {
                     setFailedAttempts(prev => prev + 1)
                     setLastError("Resposta incorreta! Veja a dica abaixo.")
                 } else {
@@ -244,7 +244,7 @@ export function StudentChallengeView({ studentEmail, studentName }: Props) {
                                 <div className="bg-emerald-neon/10 border-2 border-emerald-neon rounded-2xl p-8 text-center animate-in zoom-in duration-500">
                                     <Trophy className="h-16 w-16 text-emerald-neon mx-auto mb-4 animate-bounce" />
                                     <h3 className="text-2xl font-black text-emerald-neon">DESAFIO CONCLUÍDO!</h3>
-                                    <p className="text-emerald-neon/70 font-bold">Você ganhou +{selectedChallenge.type === 'enigma' ? Math.max(selectedChallenge.pointsXP - (failedAttempts * Math.floor(selectedChallenge.pointsXP * 0.2)), 10) : selectedChallenge.pointsXP} XP</p>
+                                    <p className="text-emerald-neon/70 font-bold">Você ganhou +{selectedChallenge.type !== 'quiz' ? Math.max(selectedChallenge.pointsXP - (failedAttempts * Math.floor(selectedChallenge.pointsXP * 0.2)), 10) : selectedChallenge.pointsXP} XP</p>
                                 </div>
                             ) : (
                                 <div className="space-y-4">
@@ -253,7 +253,7 @@ export function StudentChallengeView({ studentEmail, studentName }: Props) {
                                             {lastError}
                                         </div>
                                     )}
-                                    {selectedChallenge.type === 'enigma' && failedAttempts > 0 && selectedChallenge.hints && selectedChallenge.hints.length > 0 && (
+                                    {selectedChallenge.type !== 'quiz' && failedAttempts > 0 && selectedChallenge.hints && selectedChallenge.hints.length > 0 && (
                                         <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 animate-in fade-in">
                                             <div className="flex items-center gap-2 text-amber-600 font-bold text-xs uppercase tracking-wider mb-2">
                                                 <HelpCircle className="h-4 w-4" /> Dica Recebida (Penalidade no XP)
