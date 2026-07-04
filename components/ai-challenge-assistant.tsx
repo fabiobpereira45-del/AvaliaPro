@@ -44,20 +44,24 @@ export function AIChallengeAssistant({ open, onClose, disciplines, onApplyPrompt
         return `Aja como um Agente IA Teológico especializado em gamificação.
 Gere uma missão semanal para alunos de Teologia.
 
-CONFIGURAÇÕES:
+REGRAS OBRIGATÓRIAS:
 - Disciplina: ${disciplineName}
 - Público-alvo: ${audience}
 - Nível de Complexidade: ${level}
 - Tipo de Missão: ${typeLabels[missionType]}
+${missionType === 'quiz' ? '- ATENÇÃO: Crie APENAS UMA ÚNICA QUESTÃO de múltipla escolha. Na descrição ou conteúdo, inclua as alternativas (A, B, C, D).' : ''}
+${missionType === 'enigma' ? '- ATENÇÃO: NÃO CRIE MÚLTIPLAS ESCOLHAS. A resposta deve ser uma palavra, nome ou frase exata e curta.\n- Crie exatamente 3 dicas progressivas para ajudar o aluno se ele errar.' : ''}
 
-FORMATO DE RESPOSTA (JSON):
+FORMATO DE RESPOSTA (JSON STRICT):
 {
   "title": "Título criativo e épico",
   "description": "Uma breve introdução narrativa que envolva o aluno",
-  "content": "O corpo do desafio (o enigma em si, ou as perguntas)",
-  "correctAnswer": "A resposta esperada (se aplicável)",
+  "content": "O corpo do desafio (o enigma em si, ou a pergunta com as opções)",
+  "correctAnswer": "A resposta exata esperada (ex: a letra correta no quiz, ou a palavra/nome no enigma)",
+  ${missionType === 'enigma' ? '"hints": ["Dica 1 mais vaga", "Dica 2 moderada", "Dica 3 muito reveladora"],' : ''}
   "type": "${missionType}"
 }
+O JSON DEVE SER VÁLIDO E SEM MARKDOWN EM VOLTA SE POSSÍVEL.
 
 Por favor, gere um conteúdo teologicamente rico, preciso e desafiador.`
     }
@@ -73,10 +77,10 @@ Por favor, gere um conteúdo teologicamente rico, preciso e desafiador.`
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="bg-white w-full max-w-2xl max-h-[90vh] rounded-2xl overflow-y-auto shadow-2xl border border-white/20 animate-in zoom-in-95 duration-300">
+            <div className="bg-white w-full max-w-2xl max-h-[90vh] flex flex-col rounded-2xl overflow-hidden shadow-2xl border border-white/20 animate-in zoom-in-95 duration-300">
                 
                 {/* Header Section */}
-                <div className="bg-slate-50 p-6 border-b border-slate-100 relative">
+                <div className="bg-slate-50 p-6 border-b border-slate-100 relative shrink-0">
                     <button 
                         onClick={onClose}
                         className="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-200 transition-colors text-slate-400"
@@ -96,7 +100,7 @@ Por favor, gere um conteúdo teologicamente rico, preciso e desafiador.`
                 </div>
 
                 {/* Step Indicator */}
-                <div className="flex items-center justify-center gap-8 py-6 bg-white border-b border-slate-50">
+                <div className="flex items-center justify-center gap-8 py-6 bg-white border-b border-slate-50 shrink-0">
                     <div className={cn(
                         "flex items-center gap-2 transition-all",
                         step === 1 ? "text-indigo-600 scale-110" : "text-slate-400 opacity-50"
@@ -123,7 +127,7 @@ Por favor, gere um conteúdo teologicamente rico, preciso e desafiador.`
                 </div>
 
                 {/* Content Area */}
-                <div className="p-6">
+                <div className="p-6 flex-1 overflow-y-auto">
                     {step === 1 ? (
                         <div className="space-y-8 animate-in slide-in-from-right-4 duration-500">
                             <div className="grid grid-cols-2 gap-8">
@@ -281,13 +285,9 @@ Por favor, gere um conteúdo teologicamente rico, preciso e desafiador.`
                 </div>
 
                 {/* Footer Section */}
-                <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-center">
-                    <Button 
-                        variant="ghost" 
-                        onClick={onClose}
-                        className="text-slate-400 font-bold hover:text-slate-600 transition-colors"
-                    >
-                        Fechar Assistente
+                <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 shrink-0">
+                    <Button variant="outline" onClick={onClose} className="w-full text-slate-500 font-bold h-12 rounded-xl">
+                        Cancelar e Fechar
                     </Button>
                 </div>
             </div>

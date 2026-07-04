@@ -50,6 +50,7 @@ export interface Challenge {
   description: string
   content: string
   correctAnswer?: string
+  hints?: string[]
   pointsXP: number
   isActive: boolean
   createdAt: string
@@ -2015,6 +2016,7 @@ export async function addChallenge(challenge: Omit<Challenge, 'id' | 'createdAt'
     description: challenge.description,
     content: challenge.content,
     correct_answer: challenge.correctAnswer,
+    hints: challenge.hints || [],
     points_xp: challenge.pointsXP,
     is_active: challenge.isActive
   }).select().single()
@@ -2032,6 +2034,7 @@ export async function updateChallenge(id: string, challenge: Partial<Challenge>)
     description: challenge.description,
     content: challenge.content,
     correct_answer: challenge.correctAnswer,
+    hints: challenge.hints,
     points_xp: challenge.pointsXP,
     is_active: challenge.isActive
   }).eq('id', id)
@@ -2069,6 +2072,7 @@ function mapChallenge(row: any): Challenge {
     description: row.description,
     content: row.content,
     correctAnswer: row.correct_answer,
+    hints: row.hints || [],
     pointsXP: row.points_xp,
     isActive: row.is_active,
     createdAt: row.created_at,

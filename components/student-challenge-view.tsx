@@ -29,6 +29,8 @@ export function StudentChallengeView({ studentEmail, studentName }: Props) {
     const [answer, setAnswer] = useState("")
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [showSuccess, setShowSuccess] = useState(false)
+    const [failedAttempts, setFailedAttempts] = useState(0)
+    const [lastError, setLastError] = useState("")
 
     useEffect(() => {
         loadData()
@@ -69,21 +71,34 @@ export function StudentChallengeView({ studentEmail, studentName }: Props) {
         
         try {
             if (isCorrect) {
+                const penaltyPerFail = Math.floor(selectedChallenge.pointsXP * 0.2)
+                const calculatedXP = selectedChallenge.type === 'enigma' 
+                    ? Math.max(selectedChallenge.pointsXP - (failedAttempts * penaltyPerFail), 10)
+                    : selectedChallenge.pointsXP
+
                 await saveChallengeSubmission({
                     challengeId: selectedChallenge.id,
                     studentEmail,
                     isCompleted: true,
-                    earnedXP: selectedChallenge.pointsXP
+                    earnedXP: calculatedXP
                 })
                 setShowSuccess(true)
                 setTimeout(() => {
                     setShowSuccess(false)
                     setSelectedChallenge(null)
                     setAnswer("")
+                    setFailedAttempts(0)
+                    setLastError("")
                     loadData()
                 }, 2000)
             } else {
-                alert("Resposta incorreta! Tente novamente.")
+                if (selectedChallenge.type === 'enigma') {
+                    setFailedAttempts(prev => prev + 1)
+                    setLastError("Resposta incorreta! Veja a dica abaixo.")
+                } else {
+                    setLastError("Resposta incorreta! Tente novamente.")
+                }
+                setAnswer("")
             }
         } catch (error: any) {
             alert("Erro ao salvar: " + error.message)
@@ -145,7 +160,13 @@ export function StudentChallengeView({ studentEmail, studentName }: Props) {
                                 locked ? "bg-slate-50 border-slate-100 opacity-60" :
                                 "bg-white border-border/50 shadow-sm hover:shadow-xl hover:border-emerald-neon/40 cursor-pointer"
                             )}
-                            onClick={() => !locked && !completed && setSelectedChallenge(c)}
+                            onClick={() => {
+                                if (!locked && !completed) {
+                                    setSelectedChallenge(c)
+                                    setFailedAttempts(0)
+                                    setLastError("")
+                                }
+                            }}
                         >
                             <div className="flex items-center gap-6">
                                 <div className={cn(
@@ -223,10 +244,26 @@ export function StudentChallengeView({ studentEmail, studentName }: Props) {
                                 <div className="bg-emerald-neon/10 border-2 border-emerald-neon rounded-2xl p-8 text-center animate-in zoom-in duration-500">
                                     <Trophy className="h-16 w-16 text-emerald-neon mx-auto mb-4 animate-bounce" />
                                     <h3 className="text-2xl font-black text-emerald-neon">DESAFIO CONCLUÍDO!</h3>
-                                    <p className="text-emerald-neon/70 font-bold">Você ganhou +{selectedChallenge.pointsXP} XP</p>
+                                    <p className="text-emerald-neon/70 font-bold">Você ganhou +{selectedChallenge.type === 'enigma' ? Math.max(selectedChallenge.pointsXP - (failedAttempts * Math.floor(selectedChallenge.pointsXP * 0.2)), 10) : selectedChallenge.pointsXP} XP</p>
                                 </div>
                             ) : (
                                 <div className="space-y-4">
+                                    {lastError && (
+                                        <div className="bg-red-50 text-red-600 px-4 py-3 rounded-xl text-sm font-bold animate-in shake">
+                                            {lastError}
+                                        </div>
+                                    )}
+                                    {selectedChallenge.type === 'enigma' && failedAttempts > 0 && selectedChallenge.hints && selectedChallenge.hints.length > 0 && (
+                                        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 animate-in fade-in">
+                                            <div className="flex items-center gap-2 text-amber-600 font-bold text-xs uppercase tracking-wider mb-2">
+                                                <HelpCircle className="h-4 w-4" /> Dica Recebida (Penalidade no XP)
+                                            </div>
+                                            <p className="text-amber-800 text-sm italic">
+                                                {selectedChallenge.hints[Math.min(failedAttempts - 1, selectedChallenge.hints.length - 1)]}
+                                            </p>
+                                        </div>
+                                    )}
+
                                     <Label className="text-xs font-black uppercase tracking-widest text-slate-400 ml-2">Sua Resposta</Label>
                                     <div className="flex gap-3">
                                         <Input 
@@ -249,7 +286,7 @@ export function StudentChallengeView({ studentEmail, studentName }: Props) {
                         </div>
                         
                         <div className="p-6 bg-slate-50 border-t border-slate-100 flex justify-center">
-                            <Button variant="ghost" onClick={() => setSelectedChallenge(null)} className="text-slate-400 font-bold">
+                            <Button variant="ghost" onClick={() => { setSelectedChallenge(null); setFailedAttempts(0); setLastError(""); }} className="text-slate-400 font-bold">
                                 Voltar depois
                             </Button>
                         </div>
