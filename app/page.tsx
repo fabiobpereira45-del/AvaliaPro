@@ -131,12 +131,12 @@ export default function HomePage() {
         />
       )}
 
-      <main className="mx-auto max-w-[1400px] px-4 py-8">
+      <main className="mx-auto max-w-[1400px] sm:px-4 sm:py-8">
         {/* Landing Page */}
         {view === "landing" && (
           <div className="space-y-8">
             {/* Hero */}
-            <div className="bg-gradient-to-br from-[#020617] to-[#0f172a] rounded-[2.5rem] p-8 md:p-12 text-white shadow-2xl border border-white/5 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-10">
+            <div className="bg-gradient-to-br from-[#020617] to-[#0f172a] rounded-b-[2.5rem] sm:rounded-[2.5rem] px-6 py-12 pt-20 sm:p-8 md:p-12 text-white shadow-2xl border-b sm:border border-white/5 relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-8 sm:gap-10">
               <div className="absolute top-0 left-0 w-96 h-96 bg-emerald-neon/10 rounded-full -ml-48 -mt-48 blur-[100px]" />
               <div className="absolute bottom-0 right-0 w-64 h-64 bg-orange-vibrant/10 rounded-full blur-[100px]" />
 
@@ -180,7 +180,7 @@ export default function HomePage() {
             </div>
 
             {/* Action Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-4 sm:px-0">
 
               {/* Desafios Semanais (Antiga Área do Aluno) */}
               <button

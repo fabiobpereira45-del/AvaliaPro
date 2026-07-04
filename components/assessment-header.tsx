@@ -18,11 +18,11 @@ export function AssessmentHeader({
   onEnrollClick
 }: AssessmentHeaderProps) {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-primary text-primary-foreground shadow-md">
-      <div className="mx-auto max-w-[1400px] px-4 py-3">
-        <div className="flex items-center justify-between gap-4">
+    <header className="fixed sm:sticky top-0 z-50 w-full sm:border-b sm:border-border sm:bg-primary sm:text-primary-foreground sm:shadow-md pointer-events-none sm:pointer-events-auto">
+      <div className="mx-auto max-w-[1400px] p-4 sm:py-3 pointer-events-auto">
+        <div className="flex items-center justify-end sm:justify-between gap-4">
           {/* Logo + Brand */}
-          <div className="flex items-center gap-4">
+          <div className="hidden sm:flex items-center gap-4">
             <div className="flex items-center gap-3 bg-white/10 p-1.5 rounded-2xl border border-white/10 backdrop-blur-sm">
               <div className="flex h-11 w-11 items-center justify-center rounded-xl shadow-lg shrink-0 overflow-hidden bg-white">
                 <img src="/avalia-logo.png" alt="AVALIA" className="h-full w-full object-contain p-1" />
@@ -44,11 +44,11 @@ export function AssessmentHeader({
             {onAdminClick && (
               <button
                 onClick={onAdminClick}
-                className="flex items-center gap-1.5 rounded-md border border-primary-foreground/30 px-3 py-1.5 text-xs font-medium text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-primary-foreground transition-colors"
-                title="Painel do Professor"
+                className="flex items-center gap-2 rounded-full sm:rounded-md bg-slate-900 sm:bg-transparent border border-white/10 sm:border-primary-foreground/30 px-4 py-2.5 sm:px-3 sm:py-1.5 text-[11px] sm:text-xs font-black sm:font-medium text-white sm:text-primary-foreground/80 hover:bg-slate-800 sm:hover:bg-primary-foreground/10 hover:text-white sm:hover:text-primary-foreground transition-colors shadow-xl sm:shadow-none uppercase tracking-widest sm:tracking-normal sm:uppercase-none"
+                title="Acesso Professor"
               >
-                <LayoutDashboard className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Painel do Professor</span>
+                <User className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
+                <span>Acesso Professor</span>
               </button>
             )}
             {onStudentAreaClick && (
