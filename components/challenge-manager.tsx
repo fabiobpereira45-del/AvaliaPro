@@ -40,6 +40,7 @@ export function ChallengeManager() {
     const [description, setDescription] = useState("")
     const [content, setContent] = useState("")
     const [correctAnswer, setCorrectAnswer] = useState("")
+    const [hints, setHints] = useState<string[]>([])
     const [pointsXP, setPointsXP] = useState(20)
     const [isActive, setIsActive] = useState(true)
     const [isGenerating, setIsGenerating] = useState(false)
@@ -72,6 +73,7 @@ export function ChallengeManager() {
         setDescription("")
         setContent("")
         setCorrectAnswer("")
+        setHints([])
         setPointsXP(20)
         setIsActive(true)
         setIsModalOpen(true)
@@ -86,6 +88,7 @@ export function ChallengeManager() {
         setDescription(c.description)
         setContent(c.content)
         setCorrectAnswer(c.correctAnswer || "")
+        setHints(c.hints || [])
         setPointsXP(c.pointsXP)
         setIsActive(c.isActive)
         setIsModalOpen(true)
@@ -105,6 +108,7 @@ export function ChallengeManager() {
             description,
             content,
             correctAnswer: correctAnswer || undefined,
+            hints,
             pointsXP,
             isActive
         }
@@ -137,12 +141,13 @@ export function ChallengeManager() {
         setIsAssistantOpen(true)
     }
 
-    function handleApplyAIPrompt(data: { title: string, description: string, content: string, correctAnswer: string, type: ChallengeType }) {
+    function handleApplyAIPrompt(data: { title: string, description: string, content: string, correctAnswer: string, type: ChallengeType, hints?: string[] }) {
         setTitle(data.title)
         setDescription(data.description)
         setContent(data.content)
         setCorrectAnswer(data.correctAnswer || "")
         setType(data.type || type)
+        setHints(data.hints || [])
     }
 
     return (

@@ -18,7 +18,7 @@ interface Props {
     open: boolean
     onClose: () => void
     disciplines: Discipline[]
-    onApplyPrompt: (data: { title: string, description: string, content: string, correctAnswer: string, type: ChallengeType }) => void
+    onApplyPrompt: (data: { title: string, description: string, content: string, correctAnswer: string, type: ChallengeType, hints?: string[] }) => void
 }
 
 export function AIChallengeAssistant({ open, onClose, disciplines, onApplyPrompt }: Props) {
