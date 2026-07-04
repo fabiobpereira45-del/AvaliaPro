@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { 
     BrainCircuit, Sparkles, Wand2, Copy, ExternalLink, 
     Check, X, ChevronRight, GraduationCap, Layers, 
@@ -28,6 +28,13 @@ export function AIChallengeAssistant({ open, onClose, disciplines, onApplyPrompt
     const [level, setLevel] = useState("Intermediário")
     const [missionType, setMissionType] = useState<ChallengeType>("enigma")
     const [copied, setCopied] = useState(false)
+
+    useEffect(() => {
+        if (open) {
+            setStep(1)
+            setCopied(false)
+        }
+    }, [open])
 
     if (!open) return null
 
