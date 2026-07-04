@@ -133,6 +133,7 @@ export function ChallengeManager() {
     }
 
     async function generateWithAI() {
+        setIsModalOpen(false)
         setIsAssistantOpen(true)
     }
 
@@ -369,9 +370,16 @@ export function ChallengeManager() {
 
             <AIChallengeAssistant 
                 open={isAssistantOpen} 
-                onClose={() => setIsAssistantOpen(false)}
+                onClose={() => {
+                    setIsAssistantOpen(false)
+                    setIsModalOpen(true)
+                }}
                 disciplines={disciplines}
-                onApplyPrompt={handleApplyAIPrompt}
+                onApplyPrompt={(data) => {
+                    handleApplyAIPrompt(data)
+                    setIsAssistantOpen(false)
+                    setIsModalOpen(true)
+                }}
             />
         </div>
     )
